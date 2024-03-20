@@ -4,8 +4,7 @@
 
 #wordsWrapper {
   font-family: 'Ubuntu Mono', Serif;
-  font-size: 1.5rem;
-  display: flex;
+  /* display: flex; */
   /* border: 1px solid blue; */
   height: 75px;
   overflow: hidden;
@@ -18,7 +17,40 @@
 }
 
 .word {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
   display: flex;
-  margin: 0 0.5ch;
+  /* margin: 0 0.5ch; */
+  margin: 0.5ch;
+  color: hsl(0, 0%, 10%);
   /* border: 1px solid red; */
+  letter-spacing: 0px;
+}
+
+#cursor {
+  top: 0.21rem;
+  height: 2rem;
+  width: 0.15rem;
+  background-color: orange;
+  animation: cursorBlinking 1s infinite;
+  position: absolute;
+  border-radius: 0.5rem;
+  /* transition: 0.05s; */
+  /* transform-origin: top left; */
+  /* border: 1px solid red; */
+}
+
+@keyframes cursorBlinking {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.hidden {
+  display: none;
 }
