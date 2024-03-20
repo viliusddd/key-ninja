@@ -6,12 +6,19 @@
   font-family: 'Ubuntu Mono', Serif;
   font-size: 1.5rem;
   display: flex;
+  /* border: 1px solid blue; */
+  height: 75px;
+  overflow: hidden;
 }
+
 #words {
   display: flex;
+  flex-wrap: wrap;
+  /* border: 1px solid red; */
 }
 
 .word {
   display: flex;
-  margin: 0.5ch;
+  margin: 0 0.5ch;
+  /* border: 1px solid red; */
 }
