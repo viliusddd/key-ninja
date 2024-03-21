@@ -65,8 +65,7 @@ function adjustCursorOnScrChange() {
 
 function newCursorPos(letterNode) {
   const letterBound = letterNode.getBoundingClientRect()
-  const cursor = document.getElementById('cursor')
-  const newCursorPosition = letterBound.x - 1 + 'px'
+  const newCursorPosition = letterBound.x + letterBound.width - 1 + 'px'
   return newCursorPosition
 }
 
@@ -78,43 +77,75 @@ function keyPress() {
     'ArrowLeft', 'ArrowRight', '§', 'Enter'
   ]
   let cursor = document.getElementById('cursor')
-  let letterNode = letterNodes[0]
+  // let letterNode = letterNodes[0]
+  // let letter = letterNode.innerText
+
+  // let num = 0
+  // let oldNum
+
+  let wordNode = document.querySelector('.word')
+  let letterNode = wordNode.firstChild
   let letter = letterNode.innerText
 
-  let num = 0
-  let oldNum
-
   document.addEventListener('keydown', (event) => {
-    if (event.key == letter) {
-      console.log(`Event:${event.key} & letter:${letter} match`)
-      oldNum = num
-      num++
 
-      letter = letterNodes[num].innerText
-      letterNodes[oldNum].style.color = 'green'
-      cursor.style.left = newCursorPos(letterNodes[num])
+    if (event.key === letter) {
+      console.log(event.key, letter)
 
-    } else if (event.key == 'Backspace') {
-      console.log(`Event:${event.key} & letter:${letter}`)
-      // oldNum = num
-      num = num > 0 ? num - 1 : 0
+      // cursor.style.left = newCursorPos(letterNode)
+      let letterBound = letterNode.getBoundingClientRect()
 
-      letter = letterNodes[num].innerText
-      letterNodes[num].style.color = 'black'
-      cursor.style.left = newCursorPos(letterNodes[num])
+      // let newCursorPosition = letterBound.x + letterBound.width - 1 + 'px'
+      let newCursorPosition = letterBound.x + 12 - 1 + 'px'
+      if (letter === ' ') {
+        newCursorPosition = letterBound.x + 12 + 12 - 1 + 'px'
+      }
 
-    } else if (specialKeys.some(item => event.key === item)) {
-      console.log(`Event:${event.key} & letter:${letter}`)
-      return
+      cursor.style.left = newCursorPosition
 
-    } else {
-      console.log(`letter ${event.key} and ${letter} don't match`)
-      oldNum = num
-      num++
-      letter = letterNodes[num].innerText
-      cursor.style.left = newCursorPos(letterNodes[num])
-      letterNodes[oldNum].style.color = 'red'
+      if (wordNode.lastChild == letterNode) {
+        wordNode = wordNode.nextElementSibling
+        letterNode = wordNode.firstChild
+        letter = letterNode.innerText
+        console.log('lastChild == letterNode')
+
+      } else {
+        console.log(wordNode)
+        letterNode = letterNode.nextSibling
+        letter = letterNode.innerText
+      }
     }
+
+    // if (event.key == letter) {
+    //   console.log(`Event:${event.key} & letter:${letter} match`)
+    //   oldNum = num
+    //   num++
+
+    //   letter = letterNodes[num].innerText
+    //   letterNodes[oldNum].style.color = 'green'
+    //   cursor.style.left = newCursorPos(letterNodes[num])
+
+    // } else if (event.key == 'Backspace') {
+    //   console.log(`Event:${event.key} & letter:${letter}`)
+    //   // oldNum = num
+    //   num = num > 0 ? num - 1 : 0
+
+    //   letter = letterNodes[num].innerText
+    //   letterNodes[num].style.color = 'black'
+    //   cursor.style.left = newCursorPos(letterNodes[num])
+
+    // } else if (specialKeys.some(item => event.key === item)) {
+    //   console.log(`Event:${event.key} & letter:${letter}`)
+    //   return
+
+    // } else {
+    //   console.log(`letter ${event.key} and ${letter} don't match`)
+    //   oldNum = num
+    //   num++
+    //   letter = letterNodes[num].innerText
+    //   cursor.style.left = newCursorPos(letterNodes[num])
+    //   letterNodes[oldNum].style.color = 'red'
+    // }
   })
 }
 
