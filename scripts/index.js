@@ -83,17 +83,19 @@ function keyPress() {
       num++
 
       letter = letterNodes[num].innerText
-      letterNodes[oldNum].style.color = 'black'
+      letterNodes[oldNum].style.color = 'green'
       cursor.style.left = newCursorPos(letterNodes[num])
 
-    }else if (event.key == 'Backspace') {
+    } else if (event.key == 'Backspace') {
       console.log(`Event:${event.key} & letter:${letter}`)
       oldNum = num
       num = num > 0 ? num - 1 : 0
+
       letter = letterNodes[num].innerText
+      letterNodes[num].style.color = 'black'
       cursor.style.left = newCursorPos(letterNodes[num])
 
-    }else if (specialKeys.some(item => event.key === item)) {
+    } else if (specialKeys.some(item => event.key === item)) {
       console.log(`Event:${event.key} & letter:${letter}`)
       return
 
