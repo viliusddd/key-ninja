@@ -38,6 +38,7 @@ function buildDivFromWords(words) {
 
     [...word].forEach(letter => {
       const letterElement = document.createElement('div')
+      letterElement.className = 'letter'
       letterElement.innerText = letter
 
       wordElement?.appendChild(letterElement);
@@ -47,20 +48,63 @@ function buildDivFromWords(words) {
   })
 }
 
-async function keyPress() {
+function initCursor() {
   const cursor = document.getElementById('cursor')
   const cursorBound = cursor.getBoundingClientRect()
-  cursor.style.left = cursorBound.x + 3.5 + 'px'
+  cursor.style.left = cursorBound.x + 4.3 + 'px'
+}
 
-  for (const word of document.getElementById('words').childNodes) {
-    for (const letter of word.childNodes) {
-      const letterBound = letter.getBoundingClientRect()
+function newCursorPos(letterNode) {
+  const letterBound = letterNode.getBoundingClientRect()
+  const cursor = document.getElementById('cursor')
+  const newCursorPosition = letterBound.x - 1 + 'px'
+  return newCursorPosition
+}
 
-      await new Promise(r => setTimeout(r, 1000))
+function keyPress() {
+  const letterNodes = document.querySelectorAll('.letter')
 
-      cursor.style.left = letterBound.x + 'px'
+  // get girst letter node and it's text
+  const specialKeys = [
+    'Control', 'Shift', 'Meta', 'Alt', 'Escape', 'ArrowUp', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', '§', 'Enter'
+  ]
+  let cursor = document.getElementById('cursor')
+  let letterNode = letterNodes[0]
+  let letter = letterNode.innerText
+
+  let num = 0
+  let oldNum
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key == letter) {
+      console.log(`Event:${event.key} & letter:${letter} match`)
+      oldNum = num
+      num++
+
+      letter = letterNodes[num].innerText
+      letterNodes[oldNum].style.color = 'black'
+      cursor.style.left = newCursorPos(letterNodes[num])
+
+    }else if (event.key == 'Backspace') {
+      console.log(`Event:${event.key} & letter:${letter}`)
+      oldNum = num
+      num = num > 0 ? num - 1 : 0
+      letter = letterNodes[num].innerText
+      cursor.style.left = newCursorPos(letterNodes[num])
+
+    }else if (specialKeys.some(item => event.key === item)) {
+      console.log(`Event:${event.key} & letter:${letter}`)
+      return
+
+    } else {
+      console.log(`letter ${event.key} and ${letter} don't match`)
+      oldNum = num
+      num++
+      cursor.style.left = newCursorPos(letterNodes[num])
+      letterNodes[oldNum].style.color = 'red'
     }
-  }
+  })
 }
 
 function moveCursor() {
@@ -75,8 +119,8 @@ async function initTouchTyping(){
   const lines = await getApiJson(apiUrl)
   const words = convertJsonToWords(lines)
   buildDivFromWords(words)
-  moveCursor()
-  document.addEventListener('keydown', keyPress())
+  initCursor()
+  keyPress()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
