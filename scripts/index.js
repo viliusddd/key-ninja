@@ -65,56 +65,110 @@ function adjustCursorOnScrChange() {
 
 function newCursorPos(letterNode) {
   const letterBound = letterNode.getBoundingClientRect()
-  const newCursorPosition = letterBound.x + letterBound.width - 1 + 'px'
-  return newCursorPosition
+  const cursorX = letterBound.x + letterBound.width - 1 + 'px'
+  console.log(cursorX)
+  return cursorX
 }
 
 function keyPress() {
-  const letterNodes = document.querySelectorAll('.letter')
-
   const specialKeys = [
     'Control', 'Shift', 'Meta', 'Alt', 'Escape', 'ArrowUp', 'ArrowDown',
     'ArrowLeft', 'ArrowRight', '§', 'Enter'
   ]
   let cursor = document.getElementById('cursor')
-  // let letterNode = letterNodes[0]
-  // let letter = letterNode.innerText
-
-  // let num = 0
-  // let oldNum
-
   let wordNode = document.querySelector('.word')
   let letterNode = wordNode.firstChild
   let letter = letterNode.innerText
 
+  console.log(cursor.getBoundingClientRect().x)
+  const changeCursorX = (x, width) => x + width - 1 + 'px'
+
+  const newWord = (wordNode) => {
+    return {
+      wordNode: wordNode.nextElementSibling,
+      letterNode: () => (this.wordNode).firstChild,
+      letter: () => (this.letterNode).innerText
+    }
+  }
+
   document.addEventListener('keydown', (event) => {
 
-    if (event.key === letter) {
-      console.log(event.key, letter)
+  if ((event.key === ' ') && (letterNode === wordNode.lastChild)) {
+    console.log('space key and last word letter')
 
-      // cursor.style.left = newCursorPos(letterNode)
-      let letterBound = letterNode.getBoundingClientRect()
+    // move cursor upfront by 1 character
+    let letterBound = letterNode.getBoundingClientRect()
+    let cursorX = changeCursorX(letterBound.x, 20) // get future Cursor position
+    console.log(cursorX, '" "')
+    cursor.style.left = cursorX
 
-      // let newCursorPosition = letterBound.x + letterBound.width - 1 + 'px'
-      let newCursorPosition = letterBound.x + 12 - 1 + 'px'
-      if (letter === ' ') {
-        newCursorPosition = letterBound.x + 12 + 12 - 1 + 'px'
-      }
+    // prepare letter for next check
+    wordNode = wordNode.nextElementSibling
+    letterNode = wordNode.firstChild
+    letter = letterNode.innerText
 
-      cursor.style.left = newCursorPosition
+  } else if (event.key === letter) {
+    console.log(event.key, letter)
 
-      if (wordNode.lastChild == letterNode) {
-        wordNode = wordNode.nextElementSibling
-        letterNode = wordNode.firstChild
-        letter = letterNode.innerText
-        console.log('lastChild == letterNode')
+    // move cursor upfront by 1 character
+    let letterBound = letterNode.getBoundingClientRect()
+    let cursorX = changeCursorX(letterBound.x, letterBound.width) // get future Cursor position
+    cursor.style.left = cursorX // move cursor to new position
+    console.log(cursorX, 'key=letter')
 
-      } else {
-        console.log(wordNode)
-        letterNode = letterNode.nextSibling
-        letter = letterNode.innerText
-      }
+    letterNode.style.color = 'green'
+    // prepare letter for next check
+    if (letterNode.nextSibling) {
+      letterNode = letterNode.nextSibling
+      letter = letterNode.innerText
+    } else {
+      // fix backspace jumping per two chars
+      //
+      letter = ' '
     }
+  } else if (specialKeys.some(item => event.key === item)) {
+    return
+  } else if (event.key == 'Backspace') {
+    console.log(`Event:${event.key} & letter:${letter}`)
+
+    if (letterNode.previousSibling) {
+      // move cursor back by 1 character
+      let letterBound = letterNode.getBoundingClientRect()
+      //! letterBound value should be hardcoded 12
+      let cursorX = changeCursorX(letterBound.x, -12) // get future Cursor position
+      cursor.style.left = cursorX // move cursor to new position
+      console.log('1', cursorX)
+      // prepare letter for next check
+
+      letterNode = letterNode.previousSibling
+      letter = letterNode.innerText
+      letterNode.style.color = 'black'
+    } else {
+      // move cursor back by 1 character
+      let letterBound = letterNode.getBoundingClientRect()
+      let cursorX = changeCursorX(letterBound.x, 0) // get future Cursor position
+      cursor.style.left = cursorX // move cursor to new position
+      console.log('3', cursorX)
+      letterNode.style.color = 'black'
+      // prepare letter for next check
+
+    }
+  } else {
+    console.log(`letter ${event.key} and ${letter} don't match`)
+
+    // move cursor upfront by 1 character
+    let letterBound = letterNode.getBoundingClientRect()
+    let cursorX = changeCursorX(letterBound.x, letterBound.width) // get future Cursor position
+    cursor.style.left = cursorX // move cursor to new position
+    console.log(cursorX, 'red')
+
+    letterNode.style.color = 'red'
+    // prepare letter for next check
+    if (letterNode.nextSibling) {
+    letterNode = letterNode.nextSibling
+      letter = letterNode.innerText
+    }
+  }
 
     // if (event.key == letter) {
     //   console.log(`Event:${event.key} & letter:${letter} match`)
