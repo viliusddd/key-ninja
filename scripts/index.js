@@ -1,4 +1,5 @@
 // @ts-check
+"use strict"
 
 import {apiUrl} from "./consts.js"
 
@@ -50,8 +51,16 @@ function buildDivFromWords(words) {
 
 function initCursor() {
   const cursor = document.getElementById('cursor')
-  const cursorBound = cursor.getBoundingClientRect()
-  cursor.style.left = cursorBound.x + 4.3 + 'px'
+  // const cursorBound = cursor.getBoundingClientRect()
+  // cursor.style.left = cursorBound.x + 4.3 + 'px'
+  const firstLetterBound = document.querySelector('.letter').getBoundingClientRect()
+  // cursor.style.left = firstLetterBound.x + 4.3 + 'px'
+  // cursor.style.left = firstLetterBound.x - 1 + 'px'
+}
+
+function adjustCursorOnScrChange() {
+  window.addEventListener('resize', () => {
+  })
 }
 
 function newCursorPos(letterNode) {
@@ -64,7 +73,6 @@ function newCursorPos(letterNode) {
 function keyPress() {
   const letterNodes = document.querySelectorAll('.letter')
 
-  // get girst letter node and it's text
   const specialKeys = [
     'Control', 'Shift', 'Meta', 'Alt', 'Escape', 'ArrowUp', 'ArrowDown',
     'ArrowLeft', 'ArrowRight', '§', 'Enter'
@@ -88,7 +96,7 @@ function keyPress() {
 
     } else if (event.key == 'Backspace') {
       console.log(`Event:${event.key} & letter:${letter}`)
-      oldNum = num
+      // oldNum = num
       num = num > 0 ? num - 1 : 0
 
       letter = letterNodes[num].innerText
@@ -103,6 +111,7 @@ function keyPress() {
       console.log(`letter ${event.key} and ${letter} don't match`)
       oldNum = num
       num++
+      letter = letterNodes[num].innerText
       cursor.style.left = newCursorPos(letterNodes[num])
       letterNodes[oldNum].style.color = 'red'
     }
@@ -120,8 +129,9 @@ function moveCursor() {
 async function initTouchTyping(){
   const lines = await getApiJson(apiUrl)
   const words = convertJsonToWords(lines)
+  window.addEventListener('resize', initCursor)
+  // window.addEventListener('resize', initCursor)
   buildDivFromWords(words)
-  initCursor()
   keyPress()
 }
 
