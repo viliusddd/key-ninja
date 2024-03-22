@@ -172,8 +172,10 @@ function keyPress() {
       nextWordStart = false
 
       console.log('>', letterNode)
-      letterNode = letterNode.previousElementSibling
-      letter = letterNode.innerText
+      if (letterNode.previousElementSibling) {
+        letterNode = letterNode.previousElementSibling
+        letter = letterNode.innerText
+      }
       // move cursor back by 1 character
       let letterBound = letterNode.getBoundingClientRect()
       let cursorX = changeCursorX(letterBound.x) // get future Cursor position
