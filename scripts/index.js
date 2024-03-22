@@ -52,6 +52,7 @@ function buildDivFromWords(words) {
 function initCursor() {
   const cursor = document.getElementById('cursor')
   const firstLetterBound = document.querySelector('.letter').getBoundingClientRect()
+  cursor.style.left = firstLetterBound.x -1 + 'px'
 }
 
 function adjustCursorOnScrChange() {
@@ -94,7 +95,6 @@ function keyPress() {
 
   document.addEventListener('keydown', (event) => {
 
-
     if ((event.key === ' ') && (letterNode === wordNode.firstChild)) {
       console.log('space key and first new word letter')
       nextWordStart = false
@@ -104,6 +104,13 @@ function keyPress() {
       let cursorX = changeCursorX(letterBound.x, -0.5) // get future Cursor position
 
       cursor.style.left = cursorX + 'px'
+
+      // mark word as incorrect
+      const containsErr = node => node.classList.contains('incorrect')
+      const cn = wordNode.previousElementSibling.childNodes
+      if ([...cn].some(containsErr)) {
+        wordNode.previousElementSibling.classList.add('error')
+      }
 
       if (rowGoesUp) {
         const words = document.getElementById('words')
@@ -125,7 +132,8 @@ function keyPress() {
       cursor.style.left = cursorX + 'px' // move cursor to new position
       console.log(cursorX, 'key=letter')
 
-      letterNode.style.color = 'green'
+      // letterNode.style.color = 'green'
+      letterNode.classList.add('correct')
 
       // prepare letter for next check
       if (letterNode.nextSibling) {
@@ -165,7 +173,8 @@ function keyPress() {
         cursor.style.left = cursorX + 'px' // move cursor to new position
 
         nextWordStart = false
-        letterNode.style.color = 'black'
+        // letterNode.style.color = 'black'
+        letterNode.classList.remove('correct', 'incorrect')
         return
       }
 
@@ -185,7 +194,8 @@ function keyPress() {
 
       // letterNode = letterNode.previousSibling
       // letter = letterNode.innerText
-      letterNode.style.color = 'black'
+      // letterNode.style.color = 'black'
+      letterNode.classList.remove('correct', 'incorrect')
 
     } else {
       console.log(`letter ${event.key} and ${letter} don't match`)
@@ -197,7 +207,8 @@ function keyPress() {
       cursor.style.left = cursorX + 'px' // move cursor to new position
       console.log(cursorX, 'red')
 
-      letterNode.style.color = 'red'
+      // letterNode.style.color = 'red'
+      letterNode.classList.add('incorrect')
       // prepare letter for next check
       if (letterNode.nextElementSibling) {
       letterNode = letterNode.nextElementSibling
@@ -213,6 +224,35 @@ function keyPress() {
   })
 }
 
+function timer(count = 59) {
+  let timer = setInterval(() => {
+    document.getElementById('counter').innerText = count--
+    if (count < 0) {
+      clearInterval(timer)
+      // remove keydown event lisener here
+    }
+  }, 1000)
+}
+
+function remCls(cls) {
+  document
+    .querySelectorAll(`.${cls}`)
+    .forEach(node => node.classList.remove(cls))
+}
+
+function resetBtn() {
+  document.getElementById('counter').innerText = 60;
+
+  ['correct', 'incorrect', 'error'].forEach(cls => remCls(cls))
+
+  initCursor()
+  // remove keydown event? document.removeEventListener("",generate_func);
+  // reset timer to 60
+  //reset .words y axis to 0
+  //reset cursor x axis to .words bounding box x axis
+  // cursor.style.left = words.getBoundingClientRect().y
+}
+
 /**
  * Initialize touch typing application
  * @return {Promise<void>}
@@ -223,6 +263,8 @@ async function initTouchTyping(){
   window.addEventListener('resize', initCursor)
   // window.addEventListener('resize', initCursor)
   buildDivFromWords(words)
+  document.addEventListener('keydown', () => {timer(3)}, {once: true})
+  document.getElementById('reset').addEventListener('click', resetBtn)
   keyPress()
 }
 

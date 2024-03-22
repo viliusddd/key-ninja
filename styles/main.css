@@ -8,12 +8,15 @@
   /* border: 1px solid blue; */
   height: 75px;
   overflow: hidden;
+  border: 1px solid red;
+  border-radius: 4px;
 }
 
 #words {
   display: flex;
   flex-wrap: wrap;
-  /* border: 1px solid red; */
+  column-gap: 1ch;
+  position: relative;
 }
 
 .word {
@@ -21,7 +24,7 @@
   line-height: 1.5rem;
   display: flex;
   /* margin: 0 0.5ch; */
-  margin: 0.5ch;
+  margin: 0.5ch 0;
   color: hsl(0, 0%, 10%);
   /* border: 1px solid red; */
   letter-spacing: 0px;
@@ -53,4 +56,30 @@
 
 .hidden {
   display: none;
+}
+
+nav {
+  display: flex;
+  justify-content: right;
+}
+
+#counter {
+  display: flex;
+  border: 1px solid red;
+  width: 4ch;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.correct {
+  color: green
+}
+
+.incorrect {
+  color: red;
+}
+
+.error {
+  text-decoration: line-through;
 }
