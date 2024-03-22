@@ -97,16 +97,16 @@ function keyPress() {
     if ((event.key === ' ') && (letterNode === wordNode.lastChild)) {
       console.log('space key and last word letter')
 
-      // move cursor upfront by 1 character
-      let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, 20) // get future Cursor position
-      console.log(cursorX, '" "')
-      cursor.style.left = cursorX
-
       // prepare letter for next check
       wordNode = wordNode.nextElementSibling
       letterNode = wordNode.firstChild
       letter = letterNode.innerText
+
+      // move cursor upfront by 1 character
+      let letterBound = letterNode.getBoundingClientRect()
+      let cursorX = changeCursorX(letterBound.x, 0) // get future Cursor position
+      console.log(cursorX, '" "')
+      cursor.style.left = cursorX
 
     } else if (event.key === letter) {
       console.log(event.key, letter)
@@ -174,10 +174,6 @@ function keyPress() {
   })
 }
 
-function moveCursor() {
-  const cursor = document.getElementById('cursor')
-  const bound = cursor?.getBoundingClientRect()
-}
 /**
  * Initialize touch typing application
  * @return {Promise<void>}
