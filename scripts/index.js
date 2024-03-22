@@ -79,7 +79,7 @@ function keyPress() {
   let bound = cursor.getBoundingClientRect().x
   console.log(cursor.getBoundingClientRect().x)
 
-  const changeCursorX = (x, width = 12) => x + width - 1
+  const changeCursorX = (x, width = 0) => x + width - 1
 
   const newWord = (wordNode) => {
     return {
@@ -90,14 +90,14 @@ function keyPress() {
   }
 
   let rowGoesUp = false
+  let nextWordStart = false
 
   document.addEventListener('keydown', (event) => {
-    console.log(`letterNode: ${letterNode.innerText}`)
-    console.log(letterNode, wordNode.firstChild)
 
 
     if ((event.key === ' ') && (letterNode === wordNode.firstChild)) {
       console.log('space key and first new word letter')
+      nextWordStart = false
 
       // move cursor upfront by 1 character
       let letterBound = letterNode.getBoundingClientRect()
@@ -117,6 +117,7 @@ function keyPress() {
 
     } else if (event.key === letter) {
       console.log(event.key, letter)
+      nextWordStart = false
 
       // move cursor upfront by 1 character
       let letterBound = letterNode.getBoundingClientRect()
@@ -131,6 +132,8 @@ function keyPress() {
         letterNode = letterNode.nextElementSibling
         letter = letterNode.innerText
       } else {
+        console.log('nextWordStart: last letter, taking letter from next word start')
+        nextWordStart = true
         wordNode = wordNode.nextElementSibling
         letterNode = wordNode.firstChild
         letter = letterNode.innerText
@@ -139,6 +142,7 @@ function keyPress() {
         letterBound = letterNode.getBoundingClientRect()
         const currentCursorX = changeCursorX(letterBound.x, letterBound.width)
         if (currentCursorX < cursorX) {
+          console.log('end of line')
           rowGoesUp = true
         }
       }
@@ -150,23 +154,40 @@ function keyPress() {
     } else if (event.key == 'Backspace') {
       console.log(`Event:${event.key} & letter:${letter}`)
 
-      if (!letterNode.previousSibling) {
+      if (!letterNode.previousSibling && nextWordStart) {
+        console.log('nextWordStart = true')
+        wordNode = wordNode.previousElementSibling
+        letterNode = wordNode.lastChild
+        letter = letterNode.innerText
+
+        let letterBound = letterNode.getBoundingClientRect()
+        let cursorX = changeCursorX(letterBound.x) // get future Cursor position
+        cursor.style.left = cursorX + 'px' // move cursor to new position
+
+        nextWordStart = false
+        letterNode.style.color = 'black'
         return
       }
 
+      nextWordStart = false
+
+      console.log('>', letterNode)
+      letterNode = letterNode.previousElementSibling
+      letter = letterNode.innerText
       // move cursor back by 1 character
       let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, -12) // get future Cursor position
+      let cursorX = changeCursorX(letterBound.x) // get future Cursor position
       cursor.style.left = cursorX + 'px' // move cursor to new position
       console.log('1', cursorX)
       // prepare letter for next check
 
-      letterNode = letterNode.previousSibling
-      letter = letterNode.innerText
+      // letterNode = letterNode.previousSibling
+      // letter = letterNode.innerText
       letterNode.style.color = 'black'
 
     } else {
       console.log(`letter ${event.key} and ${letter} don't match`)
+      nextWordStart = false
 
       // move cursor upfront by 1 character
       let letterBound = letterNode.getBoundingClientRect()
@@ -176,12 +197,17 @@ function keyPress() {
 
       letterNode.style.color = 'red'
       // prepare letter for next check
-      if (letterNode.nextSibling) {
-      letterNode = letterNode.nextSibling
+      if (letterNode.nextElementSibling) {
+      letterNode = letterNode.nextElementSibling
+        letter = letterNode.innerText
+      } else {
+        console.log('nextWordStart: last letter, taking letter from next word start')
+        nextWordStart = true
+        wordNode = wordNode.nextElementSibling
+        letterNode = wordNode.firstChild
         letter = letterNode.innerText
       }
     }
-
   })
 }
 
