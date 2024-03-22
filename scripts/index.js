@@ -110,7 +110,6 @@ function keyPress() {
       let letterBound = letterNode.getBoundingClientRect()
       let cursorX = changeCursorX(letterBound.x, -0.5) // get future Cursor position
 
-      console.log(cursorX, '" "')
       cursor.style.left = cursorX + 'px'
 
       const a = cursorX
@@ -138,38 +137,30 @@ function keyPress() {
       if (letterNode.nextSibling) {
         letterNode = letterNode.nextSibling
         letter = letterNode.innerText
-      } else {
-        // fix backspace jumping per two chars
-        //
-        letter = ' '
       }
+      console.log(`cursor: ${cursorX}, ${letterBound.x}`)
+
     } else if (specialKeys.some(item => event.key === item)) {
       return
+
     } else if (event.key == 'Backspace') {
       console.log(`Event:${event.key} & letter:${letter}`)
 
-      if (letterNode.previousSibling) {
-        // move cursor back by 1 character
-        let letterBound = letterNode.getBoundingClientRect()
-        //! letterBound value should be hardcoded 12
-        let cursorX = changeCursorX(letterBound.x, -12) // get future Cursor position
-        cursor.style.left = cursorX + 'px' // move cursor to new position
-        console.log('1', cursorX)
-        // prepare letter for next check
-
-        letterNode.style.color = 'black'
-        letterNode = letterNode.previousSibling
-        letter = letterNode.innerText
-      } else {
-        // move cursor back by 1 character
-        let letterBound = letterNode.getBoundingClientRect()
-        let cursorX = changeCursorX(letterBound.x, 0) // get future Cursor position
-        cursor.style.left = cursorX + 'px' // move cursor to new position
-        console.log('3', cursorX)
-        letterNode.style.color = 'black'
-        // prepare letter for next check
-
+      if (!letterNode.previousSibling) {
+        return
       }
+
+      // move cursor back by 1 character
+      let letterBound = letterNode.getBoundingClientRect()
+      //! letterBound value should be hardcoded 12
+      let cursorX = changeCursorX(letterBound.x, -12) // get future Cursor position
+      cursor.style.left = cursorX + 'px' // move cursor to new position
+      console.log('1', cursorX)
+      // prepare letter for next check
+
+      letterNode = letterNode.previousSibling
+      letter = letterNode.innerText
+      letterNode.style.color = 'black'
     } else {
       console.log(`letter ${event.key} and ${letter} don't match`)
 
