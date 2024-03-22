@@ -51,11 +51,7 @@ function buildDivFromWords(words) {
 
 function initCursor() {
   const cursor = document.getElementById('cursor')
-  // const cursorBound = cursor.getBoundingClientRect()
-  // cursor.style.left = cursorBound.x + 4.3 + 'px'
   const firstLetterBound = document.querySelector('.letter').getBoundingClientRect()
-  // cursor.style.left = firstLetterBound.x + 4.3 + 'px'
-  // cursor.style.left = firstLetterBound.x - 1 + 'px'
 }
 
 function adjustCursorOnScrChange() {
@@ -93,18 +89,15 @@ function keyPress() {
     }
   }
 
+  let rowGoesUp = false
+
   document.addEventListener('keydown', (event) => {
-    if ((event.key === ' ') && (letterNode === wordNode.lastChild)) {
-      console.log('space key and last word letter')
+    console.log(`letterNode: ${letterNode.innerText}`)
+    console.log(letterNode, wordNode.firstChild)
 
-      // get previous cursor x coords to see if it's at the end of line
-      const prevLetterBound = letterNode.getBoundingClientRect()
-      const prevCursorX = changeCursorX(prevLetterBound.x, 0)
 
-      // prepare letter for next check
-      wordNode = wordNode.nextElementSibling
-      letterNode = wordNode.firstChild
-      letter = letterNode.innerText
+    if ((event.key === ' ') && (letterNode === wordNode.firstChild)) {
+      console.log('space key and first new word letter')
 
       // move cursor upfront by 1 character
       let letterBound = letterNode.getBoundingClientRect()
@@ -112,31 +105,42 @@ function keyPress() {
 
       cursor.style.left = cursorX + 'px'
 
-      const a = cursorX
-      const b = prevCursorX
-
-      if (cursorX < prevCursorX) {
-        console.log('move to next line: ', cursorX, prevCursorX)
+      if (rowGoesUp) {
         const words = document.getElementById('words')
         const wordsBound = words.getBoundingClientRect()
         const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
         words.style.top = wordsY
+        rowGoesUp = false
       }
+
+      console.log(`cursor> ${cursorX}, ${letterBound.x}`)
 
     } else if (event.key === letter) {
       console.log(event.key, letter)
 
       // move cursor upfront by 1 character
       let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, letterBound.width) // get future Cursor position
+      let cursorX = changeCursorX(letterBound.x, letterBound.width)
       cursor.style.left = cursorX + 'px' // move cursor to new position
       console.log(cursorX, 'key=letter')
 
       letterNode.style.color = 'green'
+
       // prepare letter for next check
       if (letterNode.nextSibling) {
-        letterNode = letterNode.nextSibling
+        letterNode = letterNode.nextElementSibling
         letter = letterNode.innerText
+      } else {
+        wordNode = wordNode.nextElementSibling
+        letterNode = wordNode.firstChild
+        letter = letterNode.innerText
+
+        // if end of line
+        letterBound = letterNode.getBoundingClientRect()
+        const currentCursorX = changeCursorX(letterBound.x, letterBound.width)
+        if (currentCursorX < cursorX) {
+          rowGoesUp = true
+        }
       }
       console.log(`cursor: ${cursorX}, ${letterBound.x}`)
 
@@ -152,7 +156,6 @@ function keyPress() {
 
       // move cursor back by 1 character
       let letterBound = letterNode.getBoundingClientRect()
-      //! letterBound value should be hardcoded 12
       let cursorX = changeCursorX(letterBound.x, -12) // get future Cursor position
       cursor.style.left = cursorX + 'px' // move cursor to new position
       console.log('1', cursorX)
@@ -161,6 +164,7 @@ function keyPress() {
       letterNode = letterNode.previousSibling
       letter = letterNode.innerText
       letterNode.style.color = 'black'
+
     } else {
       console.log(`letter ${event.key} and ${letter} don't match`)
 
