@@ -83,3 +83,11 @@ nav {
 .error {
   text-decoration: line-through;
 }
+
+#stats {
+  display: flex;
+  border: 1px solid green;
+  justify-content: left;
+  margin-right: auto;
+  gap: 2ch;
+}
