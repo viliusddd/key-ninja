@@ -1,7 +1,7 @@
 // //@ts-check
 "use strict"
 
-import {apiUrl} from "./consts.js"
+import {apiUrl, specialKeys} from "./consts.js"
 import {remCls} from "./utils.js"
 
 /**
@@ -68,27 +68,28 @@ function newCursorPos(letterNode) {
   return cursorX
 }
 
+function mvCursorToNextRow(letterNode) {
+  console.log(letterNode)
+  const wordsNode = document.getElementById('words')
+  const wordsBound = wordsNode.getBoundingClientRect()
+  const letterBound = letterNode.getBoundingClientRect()
+  console.log(letterBound)
+  const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
+  words.style.top = wordsY
+}
+
 function keyPress() {
-  const specialKeys = [
-    'Control', 'Shift', 'Meta', 'Alt', 'Escape', 'ArrowUp', 'ArrowDown',
-    'ArrowLeft', 'ArrowRight', '§', 'Enter'
-  ]
   let cursor = document.getElementById('cursor')
   let wordNode = document.querySelector('.word')
   let letterNode = wordNode.firstChild
   let letter = letterNode.innerText
 
-  let bound = cursor.getBoundingClientRect().x
   console.log(cursor.getBoundingClientRect().x)
 
-  const changeCursorX = (x, width = 0) => x + width - 1
-
-  const newWord = (wordNode) => {
-    return {
-      wordNode: wordNode.nextElementSibling,
-      letterNode: () => (this.wordNode).firstChild,
-      letter: () => (this.letterNode).innerText
-    }
+  // const changeCursorX = (x, width = 0) => x + width - 1
+  const changeCursorX = (bound, width = null) => {
+    if (width === null) width = bound.width;
+    return bound.x + width - 1
   }
 
   let rowGoesUp = false
@@ -101,9 +102,7 @@ function keyPress() {
       nextWordStart = false
 
       // move cursor upfront by 1 character
-      let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, -0.5) // get future Cursor position
-
+      let cursorX = changeCursorX(letterNode.getBoundingClientRect(), -0.5)
       cursor.style.left = cursorX + 'px'
 
       // mark word as incorrect
@@ -112,28 +111,19 @@ function keyPress() {
       if ([...cn].some(containsErr)) {
         wordNode.previousElementSibling.classList.add('error')
       }
-
       if (rowGoesUp) {
-        const words = document.getElementById('words')
-        const wordsBound = words.getBoundingClientRect()
-        const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
-        words.style.top = wordsY
+        mvCursorToNextRow(letterNode)
         rowGoesUp = false
       }
-
-      console.log(`cursor> ${cursorX}, ${letterBound.x}`)
 
     } else if (event.key === letter) {
       console.log(event.key, letter)
       nextWordStart = false
 
       // move cursor upfront by 1 character
-      let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, letterBound.width)
-      cursor.style.left = cursorX + 'px' // move cursor to new position
-      console.log(cursorX, 'key=letter')
+      let cursorX = changeCursorX(letterNode.getBoundingClientRect())
+      cursor.style.left = cursorX + 'px'
 
-      // letterNode.style.color = 'green'
       letterNode.classList.add('correct')
 
       // prepare letter for next check
@@ -148,14 +138,12 @@ function keyPress() {
         letter = letterNode.innerText
 
         // if end of line
-        letterBound = letterNode.getBoundingClientRect()
-        const currentCursorX = changeCursorX(letterBound.x, letterBound.width)
+        const currentCursorX = changeCursorX(letterNode.getBoundingClientRect())
         if (currentCursorX < cursorX) {
           console.log('end of line')
           rowGoesUp = true
         }
       }
-      console.log(`cursor: ${cursorX}, ${letterBound.x}`)
 
     } else if (specialKeys.some(item => event.key === item)) {
       return
@@ -169,33 +157,26 @@ function keyPress() {
         letterNode = wordNode.lastChild
         letter = letterNode.innerText
 
-        let letterBound = letterNode.getBoundingClientRect()
-        let cursorX = changeCursorX(letterBound.x) // get future Cursor position
-        cursor.style.left = cursorX + 'px' // move cursor to new position
+        let cursorX = changeCursorX(letterNode.getBoundingClientRect(), 0)
+        cursor.style.left = cursorX + 'px'
 
         nextWordStart = false
-        // letterNode.style.color = 'black'
+
         letterNode.classList.remove('correct', 'incorrect')
         return
       }
 
       nextWordStart = false
 
-      console.log('>', letterNode)
       if (letterNode.previousElementSibling) {
         letterNode = letterNode.previousElementSibling
         letter = letterNode.innerText
       }
-      // move cursor back by 1 character
-      let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x) // get future Cursor position
-      cursor.style.left = cursorX + 'px' // move cursor to new position
-      console.log('1', cursorX)
-      // prepare letter for next check
 
-      // letterNode = letterNode.previousSibling
-      // letter = letterNode.innerText
-      // letterNode.style.color = 'black'
+      // move cursor back by 1 character
+      let cursorX = changeCursorX(letterNode.getBoundingClientRect(), 0)
+      cursor.style.left = cursorX + 'px'
+
       letterNode.classList.remove('correct', 'incorrect')
 
     } else {
@@ -203,19 +184,16 @@ function keyPress() {
       nextWordStart = false
 
       // move cursor upfront by 1 character
-      let letterBound = letterNode.getBoundingClientRect()
-      let cursorX = changeCursorX(letterBound.x, letterBound.width) // get future Cursor position
-      cursor.style.left = cursorX + 'px' // move cursor to new position
-      console.log(cursorX, 'red')
+      let cursorX = changeCursorX(letterNode.getBoundingClientRect())
+      cursor.style.left = cursorX + 'px'
 
-      // letterNode.style.color = 'red'
       letterNode.classList.add('incorrect')
+
       // prepare letter for next check
       if (letterNode.nextElementSibling) {
-      letterNode = letterNode.nextElementSibling
+        letterNode = letterNode.nextElementSibling
         letter = letterNode.innerText
       } else {
-        console.log('nextWordStart: last letter, taking letter from next word start')
         nextWordStart = true
         wordNode = wordNode.nextElementSibling
         letterNode = wordNode.firstChild
