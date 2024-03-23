@@ -38,10 +38,10 @@ function buildDivFromWords(words) {
     const wordElement = document.createElement('div')
     wordElement.className = 'word';
 
-    [...word].forEach(letter => {
+    [...word].forEach(ltr => {
       const letterElement = document.createElement('div')
       letterElement.className = 'letter'
-      letterElement.innerText = letter
+      letterElement.innerText = ltr
 
       wordElement?.appendChild(letterElement);
     })
@@ -82,7 +82,6 @@ function keyPress() {
   let cursor = document.getElementById('cursor')
   let wordNode = document.querySelector('.word')
   let letterNode = wordNode.firstChild
-  let letter = letterNode.innerText
 
   console.log(cursor.getBoundingClientRect().x)
 
@@ -116,8 +115,8 @@ function keyPress() {
         rowGoesUp = false
       }
 
-    } else if (event.key === letter) {
-      console.log(event.key, letter)
+    } else if (event.key === letterNode.innerText) {
+      console.log(event.key, letterNode.innerText)
       nextWordStart = false
 
       // move cursor upfront by 1 character
@@ -129,13 +128,11 @@ function keyPress() {
       // prepare letter for next check
       if (letterNode.nextSibling) {
         letterNode = letterNode.nextElementSibling
-        letter = letterNode.innerText
       } else {
         console.log('nextWordStart: last letter, taking letter from next word start')
         nextWordStart = true
         wordNode = wordNode.nextElementSibling
         letterNode = wordNode.firstChild
-        letter = letterNode.innerText
 
         // if end of line
         const currentCursorX = changeCursorX(letterNode.getBoundingClientRect())
@@ -149,13 +146,11 @@ function keyPress() {
       return
 
     } else if (event.key == 'Backspace') {
-      console.log(`Event:${event.key} & letter:${letter}`)
+      console.log(`Event:${event.key} & letter:${letterNode.innerText}`)
 
       if (!letterNode.previousSibling && nextWordStart) {
-        console.log('nextWordStart = true')
         wordNode = wordNode.previousElementSibling
         letterNode = wordNode.lastChild
-        letter = letterNode.innerText
 
         let cursorX = changeCursorX(letterNode.getBoundingClientRect(), 0)
         cursor.style.left = cursorX + 'px'
@@ -170,7 +165,6 @@ function keyPress() {
 
       if (letterNode.previousElementSibling) {
         letterNode = letterNode.previousElementSibling
-        letter = letterNode.innerText
       }
 
       // move cursor back by 1 character
@@ -180,7 +174,7 @@ function keyPress() {
       letterNode.classList.remove('correct', 'incorrect')
 
     } else {
-      console.log(`letter ${event.key} and ${letter} don't match`)
+      console.log(`letter ${event.key} and ${letterNode.innerText} don't match`)
       nextWordStart = false
 
       // move cursor upfront by 1 character
@@ -192,12 +186,17 @@ function keyPress() {
       // prepare letter for next check
       if (letterNode.nextElementSibling) {
         letterNode = letterNode.nextElementSibling
-        letter = letterNode.innerText
       } else {
         nextWordStart = true
         wordNode = wordNode.nextElementSibling
         letterNode = wordNode.firstChild
-        letter = letterNode.innerText
+      }
+
+      // if end of line
+      const currentCursorX = changeCursorX(letterNode.getBoundingClientRect())
+      if (currentCursorX < cursorX) {
+        console.log('end of line')
+        rowGoesUp = true
       }
     }
   })
