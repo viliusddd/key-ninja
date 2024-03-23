@@ -78,6 +78,18 @@ function mvCursorToNextRow(letterNode) {
   words.style.top = wordsY
 }
 
+/**
+ * Increase the cursor x value by the width of HTML Element width or
+ * optional number.
+ * @param {DOMRect} bound - bounding box of parent Element
+ * @param {number} [width] - number to increase the cursor x value with
+ * @return {number} how many pixels to move on x axis
+ */
+function changeCursorX (bound, width = null) {
+  if (width === null) width = bound.width;
+  return bound.x + width - 1
+}
+
 function keyPress() {
   let cursor = document.getElementById('cursor')
   let wordNode = document.querySelector('.word')
@@ -85,11 +97,6 @@ function keyPress() {
 
   console.log(cursor.getBoundingClientRect().x)
 
-  // const changeCursorX = (x, width = 0) => x + width - 1
-  const changeCursorX = (bound, width = null) => {
-    if (width === null) width = bound.width;
-    return bound.x + width - 1
-  }
 
   let rowGoesUp = false
   let nextWordStart = false
