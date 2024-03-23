@@ -2,6 +2,7 @@
 "use strict"
 
 import {apiUrl} from "./consts.js"
+import {remCls} from "./utils.js"
 
 /**
  * Get and format api response to single string
@@ -232,12 +233,6 @@ function timer(count = 59) {
       // remove keydown event lisener here
     }
   }, 1000)
-}
-
-function remCls(cls) {
-  document
-    .querySelectorAll(`.${cls}`)
-    .forEach(node => node.classList.remove(cls))
 }
 
 function resetBtn() {
