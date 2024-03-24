@@ -1,3 +1,7 @@
+/**
+ * Moves text insertion indication cursor
+ * (HTML div element) horizontally.
+ */
 export class Cursor {
   constructor() {
     this.cursorElement = document.getElementById('cursor');

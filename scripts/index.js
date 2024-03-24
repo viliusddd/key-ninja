@@ -4,12 +4,16 @@ import {Cursor} from "./cursor.js"
 import {getApiJson, buildDivFromWords, convertJsonToWords} from "./utils.js"
 
 
+/**
+ * Cheks if event.key match letter from supplied text.
+ * @param {KeyboardEvent} evt
+ */
 function onKeyDown(evt) {
   const cursor = new Cursor()
   const key = new Key(evt, cursor)
 
   if (evt.key === ' ') {
-    if (!key.isFirstLetter()) key.goToNextWord()
+    if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
     return
   } else if (evt.key === 'Backspace') {
@@ -22,7 +26,7 @@ function onKeyDown(evt) {
 }
 
 /**
- * Initialize touch typing application
+ * Initialize touch-typing application
  * @return {Promise<void>}
  */
 async function initTouchTyping(){

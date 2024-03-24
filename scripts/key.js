@@ -1,12 +1,24 @@
+/**
+ * Checks if user input matches letters and goes back and forth the words.
+ */
 export class Key {
+  /**
+   * @param {KeyboardEvent} event - coming from 'keydown' eventListener.
+   * @param {Cursor} cursor - Cursor object responsible of moving text
+   * insertion indication cursor horizontally.
+   */
   constructor(event, cursor) {
     this._event = event;
-    this.cursor = cursor;
+    this._cursor = cursor;
     this.initKey();
   }
 
   get event() {
     return this._event
+  }
+
+  get cursor() {
+    return this._cursor
   }
 
   initKey() {
@@ -57,11 +69,14 @@ export class Key {
     }
   }
 
-  wordIsCorrect() {
-    return this.letterNodes.every(node => node.classList.contains('correct'))
-  }
-
-  goToNextWord() {
+  /**
+   * Go to next word element:
+   * - if word have issues - mark it with .error class
+   * - move .active class from current to next word
+   * - adjust cursor to new coordinates
+   * - if next word is on the other line, then asjusts the row also
+   */
+  nextWord() {
     if (!this.wordIsCorrect()) this.activeWord.classList.add('error')
 
     this.activeWord.classList.remove('active')
@@ -75,13 +90,18 @@ export class Key {
     const currentCursorX = this.cursor.newCoord(this.letterNode, 0)
 
     this.cursor.move(this.letterNode, 0)
+
     if (prevCursorX > currentCursorX) this.goToNextRow()
   }
 
-  isFirstLetter() {
+  isFirstWordLetter() {
     return this.letterNode
       ? this.letterNode.isSameNode(this.activeWord.firstChild)
       : false
+  }
+
+  wordIsCorrect() {
+    return this.letterNodes.every(node => node.classList.contains('correct'))
   }
 
   goToNextRow() {
@@ -89,27 +109,30 @@ export class Key {
     const wordsBound = wordsNode.getBoundingClientRect()
     const letterBound = this.letterNode.getBoundingClientRect()
     const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
-    words.style.top = wordsY
+    words.style.top = wordsY //! investigate
   }
 
-  getWordsEdge() {
-    const wrapper = document.getElementById('wordsWrapper')
-    const wrapperBB = wrapper.getBoundingClientRect()
-    return wrapperBB.x + wrapperBB.width
-  }
-
+  /**
+   * Create new html div element for letter and append it to word, but:
+   * - there can't be more than 5 "extra" appended letters
+   * - it can't go beyond the edge of wordsWrapper
+   */
   appendLetter() {
-    if (this.activeWord.querySelectorAll('.extra').length === 5) return
-
     let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
-    if (cursorX > this.getWordsEdge()) return
+    const wwBBox = this.cursor.getBBox(document.getElementById('wordsWrapper'))
 
-    const div = document.createElement('div')
-    div.classList.add('letter', 'incorrect', 'extra')
-    div.innerText = this.event.key
-    this.activeWord.appendChild(div)
+    if (this.activeWord.querySelectorAll('.extra').length === 5) {
+      return
+    } else if (cursorX > (wwBBox.x + wwBBox.width)) {
+      return
+    } else {
+      const div = document.createElement('div')
+      div.classList.add('letter', 'incorrect', 'extra')
+      div.innerText = this.event.key
+      this.activeWord.appendChild(div)
 
-    this.cursor.move(this.activeWord.lastChild)
+      this.cursor.move(this.activeWord.lastChild)
+    }
   }
 
   status() {}
