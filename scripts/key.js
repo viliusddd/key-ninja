@@ -22,6 +22,7 @@ export class Key {
   }
 
   initKey() {
+    /** @type {Element} */
     this.activeWord = document.querySelector('.active')
     this.letterNodes = [...this.activeWord.children]
     this.letterNode = this.letterNodes.find(word => word.classList.length === 1)
@@ -47,7 +48,7 @@ export class Key {
     } else {
       this.letterNode.previousSibling.classList.remove('correct', 'incorrect')
       this.cursor.move(this.letterNode.previousSibling, 0)
-      }
+    }
   }
 
   /**
@@ -80,7 +81,7 @@ export class Key {
     if (!this.wordIsCorrect()) this.activeWord.classList.add('error')
 
     this.activeWord.classList.remove('active')
-    const prevCursorX  = this.cursor.newCoord(this.activeWord.lastChild, 0)
+    const prevCursorX = this.cursor.newCoord(this.activeWord.lastChild, 0)
 
     this.activeWord = this.activeWord.nextSibling
     this.activeWord.classList.add('active')
@@ -91,7 +92,16 @@ export class Key {
 
     this.cursor.move(this.letterNode, 0)
 
-    if (prevCursorX > currentCursorX) this.goToNextRow()
+    if (prevCursorX > currentCursorX) {
+      const siblings = this.getPreviousSiblings(this.activeWord)
+      siblings.forEach(sibling => sibling.classList.add('hidden'))
+    }
+  }
+
+  getPreviousSiblings(element) {
+    const siblings = []
+    while (element = element.previousSibling) siblings.push(element)
+    return siblings
   }
 
   isFirstWordLetter() {
@@ -104,14 +114,6 @@ export class Key {
     return this.letterNodes.every(node => node.classList.contains('correct'))
   }
 
-  goToNextRow() {
-    const wordsNode = document.getElementById('words')
-    const wordsBound = wordsNode.getBoundingClientRect()
-    const letterBound = this.letterNode.getBoundingClientRect()
-    const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
-    words.style.top = wordsY //! investigate
-  }
-
   /**
    * Create new html div element for letter and append it to word, but:
    * - there can't be more than 5 "extra" appended letters
@@ -121,21 +123,18 @@ export class Key {
     let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
     const wwBBox = this.cursor.getBBox(document.getElementById('wordsWrapper'))
 
-    if (this.activeWord.querySelectorAll('.extra').length === 5) {
-      return
-    } else if (cursorX > (wwBBox.x + wwBBox.width)) {
-      return
-    } else {
-      const div = document.createElement('div')
-      div.classList.add('letter', 'incorrect', 'extra')
-      div.innerText = this.event.key
-      this.activeWord.appendChild(div)
+    if (cursorX > (wwBBox.x + wwBBox.width)) return
+    if (this.activeWord.querySelectorAll('.extra').length === 5) return
 
-      this.cursor.move(this.activeWord.lastChild)
-    }
+    const div = document.createElement('div')
+    div.classList.add('letter', 'incorrect', 'extra')
+    div.innerText = this.event.key
+    this.activeWord.appendChild(div)
+
+    this.cursor.move(this.activeWord.lastChild)
   }
 
-  status() {}
+  status() { }
 
-  stats() {}
+  stats() { }
 }
