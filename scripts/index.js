@@ -29,7 +29,6 @@ async function initTouchTyping(){
   const lines = await getApiJson(apiUrl)
   const words = convertJsonToWords(lines)
   buildDivFromWords(words)
-  // document.addEventListener('keydown', (evt) => onKeyDown(evt))
   document.addEventListener('keydown', (evt) => onKeyDown(evt))
 }
 

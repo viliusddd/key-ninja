@@ -2,10 +2,6 @@ export class Key {
   constructor(event, cursor) {
     this._event = event;
     this.cursor = cursor;
-    let activeWord;
-    let letterNode;
-    let letter;
-    let letters;
     this.initKey();
   }
 
@@ -59,12 +55,12 @@ export class Key {
       this.letterNode.classList.add(name)
       this.cursor.move(this.letterNode)
     }
-
   }
 
   wordIsCorrect() {
     return this.letterNodes.every(node => node.classList.contains('correct'))
   }
+
   goToNextWord() {
     if (!this.wordIsCorrect()) this.activeWord.classList.add('error')
 
@@ -81,11 +77,13 @@ export class Key {
     this.cursor.move(this.letterNode, 0)
     if (prevCursorX > currentCursorX) this.goToNextRow()
   }
+
   isFirstLetter() {
     return this.letterNode
       ? this.letterNode.isSameNode(this.activeWord.firstChild)
       : false
   }
+
   goToNextRow() {
     const wordsNode = document.getElementById('words')
     const wordsBound = wordsNode.getBoundingClientRect()
@@ -93,11 +91,13 @@ export class Key {
     const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
     words.style.top = wordsY
   }
+
   getWordsEdge() {
     const wrapper = document.getElementById('wordsWrapper')
     const wrapperBB = wrapper.getBoundingClientRect()
     return wrapperBB.x + wrapperBB.width
   }
+
   appendLetter() {
     if (this.activeWord.querySelectorAll('.extra').length === 5) return
 
@@ -113,17 +113,6 @@ export class Key {
   }
 
   status() {}
-  stats() {}
-}
 
-/**
- * Increase the cursor x value by the width of HTML Element width or
- * optional number.
- * @param {DOMRect} bound - bounding box of parent Element
- * @param {number} [width] - number to increase the cursor x value with
- * @return {number} how many pixels to move on x axis
- */
-function changeCursorX (bound, width = null) {
-  if (width === null) width = bound.width;
-  return bound.x + width - 1
+  stats() {}
 }
