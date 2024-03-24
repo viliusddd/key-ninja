@@ -1,10 +1,12 @@
 import {apiUrl, specialKeys} from "./consts.js"
 import {Key} from "./key.js"
+import {Cursor} from "./cursor.js"
 import {getApiJson, buildDivFromWords, convertJsonToWords} from "./utils.js"
 
 
 function onKeyDown(evt) {
-  const key = new Key(evt)
+  const cursor = new Cursor()
+  const key = new Key(evt, cursor)
 
   if (evt.key === ' ') {
     if (!key.isFirstLetter()) key.goToNextWord()

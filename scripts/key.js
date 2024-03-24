@@ -1,8 +1,7 @@
 export class Key {
-  constructor(event) {
+  constructor(event, cursor) {
     this._event = event;
-    // this.cursor = cursor;
-    let cursor;
+    this.cursor = cursor;
     let activeWord;
     let letterNode;
     let letter;
@@ -15,7 +14,6 @@ export class Key {
   }
 
   initKey() {
-    this.cursor = document.getElementById('cursor')
     this.activeWord = document.querySelector('.active')
     this.letterNodes = [...this.activeWord.children]
     this.letterNode = this.letterNodes.find(word => word.classList.length === 1)
@@ -32,21 +30,15 @@ export class Key {
   prev() {
     if (this.activeWord.lastChild.classList.contains('extra')) {
       this.activeWord.lastChild.remove()
-      this.cursor.style.left = changeCursorX(
-        this.activeWord.lastChild.getBoundingClientRect()
-      ) + 'px'
+      this.cursor.move(this.activeWord.lastChild)
     } else if (!this.letterNode) {
       this.activeWord.lastChild.classList.remove('correct', 'incorrect')
-      this.cursor.style.left = changeCursorX(
-        this.activeWord.lastChild.getBoundingClientRect(), 0
-      ) + 'px'
+      this.cursor.move(this.activeWord.lastChild, 0)
     } else if (this.letterNode.isSameNode(this.activeWord.firstChild)) {
       return
     } else {
       this.letterNode.previousSibling.classList.remove('correct', 'incorrect')
-      this.cursor.style.left = changeCursorX(
-        this.letterNode.previousSibling.getBoundingClientRect(), 0
-      ) + 'px'
+      this.cursor.move(this.letterNode.previousSibling, 0)
       }
   }
 
@@ -65,9 +57,7 @@ export class Key {
       if (!correct) this.appendLetter();
     } else {
       this.letterNode.classList.add(name)
-      this.cursor.style.left = changeCursorX(
-        this.letterNode.getBoundingClientRect()
-      ) + 'px'
+      this.cursor.move(this.letterNode)
     }
 
   }
@@ -76,26 +66,20 @@ export class Key {
     return this.letterNodes.every(node => node.classList.contains('correct'))
   }
   goToNextWord() {
-    if (!this.wordIsCorrect()) {
-      this.activeWord.classList.add('error')
-    }
+    if (!this.wordIsCorrect()) this.activeWord.classList.add('error')
 
     this.activeWord.classList.remove('active')
+    const prevCursorX  = this.cursor.newCoord(this.activeWord.lastChild, 0)
 
     this.activeWord = this.activeWord.nextSibling
     this.activeWord.classList.add('active')
+
     this.initKey()
-    const cursorX = changeCursorX(this.letterNode.getBoundingClientRect(), 0)
 
-    const nextCursorX = this.isLastInRow(cursorX)
+    const currentCursorX = this.cursor.newCoord(this.letterNode, 0)
 
-    if (nextCursorX) {
-      // go to next row
-      this.cursor.style.left = nextCursorX + 'px'
-      this.goToNextRow()
-    } else {
-      this.cursor.style.left = cursorX + 'px'
-    }
+    this.cursor.move(this.letterNode, 0)
+    if (prevCursorX > currentCursorX) this.goToNextRow()
   }
   isFirstLetter() {
     return this.letterNode
@@ -109,38 +93,23 @@ export class Key {
     const wordsY = wordsBound.y - letterBound.height - 12 + 'px'
     words.style.top = wordsY
   }
-  isLastInRow(cursorX) {
-    const nextCursorX = changeCursorX(
-      this.activeWord.previousSibling.lastChild.getBoundingClientRect(), 0
-      // this.letterNode.nextSibling.getBoundingClientRect(), 0
-    )
-
-    return (cursorX < nextCursorX) ? cursorX : null
-  }
   getWordsEdge() {
     const wrapper = document.getElementById('wordsWrapper')
     const wrapperBB = wrapper.getBoundingClientRect()
     return wrapperBB.x + wrapperBB.width
   }
   appendLetter() {
-    if (this.activeWord.querySelectorAll('.extra').length === 5) {
-      return
-    }
+    if (this.activeWord.querySelectorAll('.extra').length === 5) return
 
-    let cursorX = changeCursorX(
-      this.activeWord.lastChild.getBoundingClientRect(), 24
-    )
-    if (cursorX > this.getWordsEdge()) {
-      return
-    }
+    let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
+    if (cursorX > this.getWordsEdge()) return
 
     const div = document.createElement('div')
     div.classList.add('letter', 'incorrect', 'extra')
     div.innerText = this.event.key
     this.activeWord.appendChild(div)
 
-    cursorX = changeCursorX(this.activeWord.lastChild.getBoundingClientRect())
-    this.cursor.style.left = cursorX + 'px'
+    this.cursor.move(this.activeWord.lastChild)
   }
 
   status() {}
