@@ -2,7 +2,7 @@
 @import url(reset.css);
 @import url(styles.css);
 
-.wordsWrapper {
+.words-wrapper {
   font-family: 'Ubuntu Mono', Serif;
   /* display: flex; */
   height: 75px;
