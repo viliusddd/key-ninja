@@ -3,13 +3,15 @@
  * (HTML div element) horizontally.
  */
 export default class Cursor {
+  #cursorElement
+
   constructor() {
-    this.cursorElement = document.getElementById('cursor');
+    this.#cursorElement = document.querySelector('.cursor');
   }
 
   move(element, width = null) {
     const pixels = this.newCoord(element, width)
-    this.cursorElement.style.left = `${pixels}px`
+    this.#cursorElement.style.left = `${pixels}px`
   }
 
   newCoord(element, width = null) {

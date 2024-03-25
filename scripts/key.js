@@ -121,7 +121,7 @@ export default class Key {
    */
   appendLetter() {
     let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
-    const wwBBox = this.cursor.getBBox(document.getElementById('wordsWrapper'))
+    const wwBBox = this.cursor.getBBox(document.querySelector('.wordsWrapper'))
 
     if (cursorX > (wwBBox.x + wwBBox.width)) return
     if (this.activeWord.querySelectorAll('.extra').length === 5) return

@@ -36,7 +36,7 @@ export function convertJsonToWords(responseJson) {
 }
 
 export function buildDivFromWords(words) {
-  const wordsDiv = document.getElementById('words')
+  const wordsDiv = document.querySelector('.words')
 
   words.forEach(word => {
     const wordElement = document.createElement('div')

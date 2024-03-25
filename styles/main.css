@@ -2,7 +2,7 @@
 @import url(reset.css);
 @import url(styles.css);
 
-#wordsWrapper {
+.wordsWrapper {
   font-family: 'Ubuntu Mono', Serif;
   /* display: flex; */
   height: 75px;
@@ -11,7 +11,7 @@
   border-radius: 4px;
 }
 
-#words {
+.words {
   display: flex;
   flex-wrap: wrap;
   column-gap: 1ch;
@@ -29,7 +29,7 @@
   letter-spacing: 0px;
 }
 
-#cursor {
+.cursor {
   top: 0.21rem;
   height: 2rem;
   width: 2px;
@@ -62,7 +62,7 @@ nav {
   justify-content: right;
 }
 
-#counter {
+.counter {
   display: flex;
   /* border: 1px solid red; */
   width: 4ch;
@@ -83,7 +83,7 @@ nav {
   text-decoration: line-through;
 }
 
-#stats {
+.stats {
   display: flex;
   justify-content: left;
   margin-right: auto;
