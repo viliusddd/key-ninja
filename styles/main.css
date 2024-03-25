@@ -5,10 +5,9 @@
 #wordsWrapper {
   font-family: 'Ubuntu Mono', Serif;
   /* display: flex; */
-  /* border: 1px solid blue; */
   height: 75px;
   overflow: hidden;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   border-radius: 4px;
 }
 
@@ -65,7 +64,7 @@ nav {
 
 #counter {
   display: flex;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   width: 4ch;
   align-items: center;
   justify-content: center;
@@ -86,8 +85,8 @@ nav {
 
 #stats {
   display: flex;
-  border: 1px solid green;
   justify-content: left;
   margin-right: auto;
   gap: 2ch;
+  /* border: 1px solid green; */
 }
