@@ -1,7 +1,7 @@
 /**
  * Checks if user input matches letters and goes back and forth the words.
  */
-export class Key {
+export default class Key {
   /**
    * @param {KeyboardEvent} event - coming from 'keydown' eventListener.
    * @param {Cursor} cursor - Cursor object responsible of moving text
@@ -83,7 +83,7 @@ export class Key {
     this.activeWord.classList.remove('active')
     const prevCursorX = this.cursor.newCoord(this.activeWord.lastChild, 0)
 
-    this.activeWord = this.activeWord.nextSibling
+    this.activeWord = this.activeWord.nextSibling //! at the end of tex is undefined?
     this.activeWord.classList.add('active')
 
     this.initKey()
@@ -133,8 +133,4 @@ export class Key {
 
     this.cursor.move(this.activeWord.lastChild)
   }
-
-  status() { }
-
-  stats() { }
 }

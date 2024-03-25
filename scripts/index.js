@@ -1,7 +1,7 @@
-import {apiUrl, specialKeys} from "./consts.js"
-import {Key} from "./key.js"
-import {Cursor} from "./cursor.js"
-import {getApiJson, buildDivFromWords, convertJsonToWords} from "./utils.js"
+import { apiUrl, specialKeys } from "./consts.js"
+import Key from "./key.js"
+import Cursor from "./cursor.js"
+import { getApiJson, buildDivFromWords, convertJsonToWords } from "./utils.js"
 
 
 /**
@@ -29,13 +29,11 @@ function onKeyDown(evt) {
  * Initialize touch-typing application
  * @return {Promise<void>}
  */
-async function initTouchTyping(){
+async function initTouchTyping() {
   const lines = await getApiJson(apiUrl)
   const words = convertJsonToWords(lines)
   buildDivFromWords(words)
-  document.addEventListener('keydown', (evt) => onKeyDown(evt))
+  document.addEventListener('keydown', onKeyDown)
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  initTouchTyping()
-})
+document.addEventListener('DOMContentLoaded', initTouchTyping)
