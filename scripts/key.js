@@ -7,9 +7,10 @@ export default class Key {
    * @param {Cursor} cursor - Cursor object responsible of moving text
    * insertion indication cursor horizontally.
    */
-  constructor(event, cursor) {
+  constructor(event, cursor, appElement) {
     this._event = event;
     this._cursor = cursor;
+    this._appElement = appElement
     this.initKey();
   }
 
@@ -21,9 +22,13 @@ export default class Key {
     return this._cursor
   }
 
+  get appElement() {
+    return this._appElement
+  }
+
   initKey() {
     /** @type {Element} */
-    this.activeWord = document.querySelector('.active')
+    this.activeWord = this.appElement.querySelector('.active')
     this.letterNodes = [...this.activeWord.children]
     this.letterNode = this.letterNodes.find(word => word.classList.length === 1)
     this.letter = this.letterNode ? this.letterNode.innerText : undefined
@@ -121,7 +126,9 @@ export default class Key {
    */
   appendLetter() {
     let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
-    const wwBBox = this.cursor.getBBox(document.querySelector('.words-wrapper'))
+    const wwBBox = this.cursor.getBBox(
+      this.appElement.querySelector('.words-wrapper')
+    )
 
     if (cursorX > (wwBBox.x + wwBBox.width)) return
     if (this.activeWord.querySelectorAll('.extra').length === 5) return

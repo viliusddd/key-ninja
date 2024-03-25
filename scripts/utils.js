@@ -35,22 +35,22 @@ export function convertJsonToWords(responseJson) {
   return words
 }
 
-export function buildDivFromWords(words) {
-  const wordsDiv = document.querySelector('.words')
+export function buildDivFromWords(appElement, words) {
+  const wordsDiv = appElement.querySelector('.words')
 
   words.forEach(word => {
     const wordElement = document.createElement('div')
     wordElement.className = 'word';
 
-    [...word].forEach(ltr => {
+    [...word].forEach(letter => {
       const letterElement = document.createElement('div')
       letterElement.className = 'letter'
-      letterElement.innerText = ltr
+      letterElement.innerText = letter
 
       wordElement.appendChild(letterElement);
     })
 
     wordsDiv.appendChild(wordElement);
-    document.querySelector('.word').classList.add('active')
+    wordsDiv.querySelector('.word').classList.add('active')
   })
 }

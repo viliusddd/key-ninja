@@ -5,8 +5,8 @@
 export default class Cursor {
   #cursorElement
 
-  constructor() {
-    this.#cursorElement = document.querySelector('.cursor');
+  constructor(appElement) {
+    this.#cursorElement = appElement.querySelector('.cursor');
   }
 
   move(element, width = null) {

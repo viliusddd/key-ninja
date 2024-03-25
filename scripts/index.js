@@ -4,8 +4,7 @@ import Cursor from "./cursor.js"
 import { getApiJson, buildDivFromWords, convertJsonToWords } from "./utils.js"
 
 document.addEventListener('DOMContentLoaded', () => {
-  const touchTypingApp = document.querySelector('.app')
-  initTouchTyping(touchTypingApp)
+  touchTyping(document.querySelector('.app'))
 })
 
 /**
@@ -13,21 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {Element} appElement - root element of application
  * @return {Promise<void>}
  */
-async function initTouchTyping(appElement) {
+async function touchTyping(appElement) {
   const lines = await getApiJson(apiUrl)
   const words = convertJsonToWords(lines)
-  buildDivFromWords(words)
-  document.addEventListener('keydown', onKeyDown)
+  buildDivFromWords(appElement, words)
+
+  document.addEventListener('keydown', (evt) => {
+    const cursor = new Cursor(appElement)
+    const key = new Key(evt, cursor, appElement)
+    type(key, evt)
+  })
 }
 
-/**
- * Cheks if event.key match letter from supplied text.
- * @param {KeyboardEvent} evt
- */
-function onKeyDown(evt) {
-  const cursor = new Cursor()
-  const key = new Key(evt, cursor)
-
+async function type(key, evt) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
