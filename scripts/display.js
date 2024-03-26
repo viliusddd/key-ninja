@@ -18,9 +18,13 @@ export default class Display {
    * @param {object} responseJson - json response from api
    * @return {string[]}
    */
-  async convertJsonToWords() {
+  async getTextFromApi() {
     const randInt = Math.floor(Math.random() * 154) + 1
-    const apiJson = await this.getApiJson(`${apiUrl} ${randInt}`)
+    return await this.getApiJson(`${apiUrl} ${randInt}`)
+  }
+
+  async convertJsonToWords() {
+    const apiJson = await this.getTextFromApi()
     const lines = apiJson[0].lines
 
     return lines
