@@ -5,13 +5,22 @@ export default class Display {
     this.displayElement = displayElement
   }
 
+  reset() {
+    console.log('reset display')
+  }
+
+  restart() {
+    console.log('restart display')
+  }
+
   /**
    * Convert api response json to array of strings.
    * @param {object} responseJson - json response from api
    * @return {string[]}
    */
   async convertJsonToWords() {
-    const apiJson = await this.getApiJson(apiUrl)
+    const randInt = Math.floor(Math.random() * 154) + 1
+    const apiJson = await this.getApiJson(`${apiUrl} ${randInt}`)
     const lines = apiJson[0].lines
 
     return lines
@@ -52,6 +61,15 @@ export default class Display {
 
       wordsDiv.appendChild(wordElement);
       wordsDiv.querySelector('.word').classList.add('active')
+    })
+  }
+  reset() {
+    const resetElement = this.displayElement.querySelector('.reset')
+
+    resetElement.addEventListener('click', () => {
+      appElement.querySelector('.counter').innerText = 60
+      appElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
+      appElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
     })
   }
 }

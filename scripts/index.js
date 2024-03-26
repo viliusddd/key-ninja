@@ -15,14 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function touchTyping(appElement) {
   document.addEventListener('keydown', () => timer(appElement), { once: true })
 
-  const resetElement = appElement.querySelector('.reset')
-  resetElement.addEventListener('click', () => {
-    appElement.querySelector('.counter').innerText = 60
-    appElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
-    appElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
-
-  })
-
   const counter = appElement.querySelector('.counter')
   const abortController = new AbortController();
   const { signal } = abortController
@@ -37,19 +29,21 @@ async function touchTyping(appElement) {
     const stats = new Stats(appElement)
     const key = new Key(evt, cursor, appElement)
 
-    await type(key, evt, stats)
+    await type(key, evt, stats, display)
   }, { signal })
 }
 
-async function type(key, evt, stats) {
-  // if (document.querySelector('.counter').innerText === 0) return
-
+async function type(key, evt, stats, display) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
     return
   } else if (evt.key === 'Backspace') {
     key.prev()
+  } else if (evt.key === 'Enter') {
+    display.restart()
+  } else if (evt.key === 'Escape') {
+    display.reset()
   } else if (evt.key === key.letter) {
     key.next(true)
   } else {
