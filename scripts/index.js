@@ -12,28 +12,33 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {Element} appElement - root element of application
  * @return {Promise<void>}
  */
-async function touchTyping(appElement) {
+function touchTyping(appElement) {
   document.addEventListener('keydown', () => timer(appElement), { once: true })
 
   const counter = appElement.querySelector('.counter')
   const abortController = new AbortController();
   const { signal } = abortController
 
-  const display = new Display(appElement.querySelector('.display'))
-  await display.buildWords()
+  const cursor = new Cursor(appElement)
+  const displayElement = appElement.querySelector('.display')
+  const display = new Display(displayElement, cursor)
+  display.create()
+
+  const resetElement = appElement.querySelector('.reset')
+  console.log(resetElement)
+  resetElement.addEventListener('click', () => display.restart())
 
   document.addEventListener('keydown', async (evt) => {
     if (counter.innerText === '0') abortController.abort()
 
-    const cursor = new Cursor(appElement)
     const stats = new Stats(appElement)
     const key = new Key(evt, cursor, appElement)
 
-    await type(key, evt, stats, display)
+    type(key, evt, stats, display)
   }, { signal })
 }
 
-async function type(key, evt, stats, display) {
+function type(key, evt, stats, display) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {

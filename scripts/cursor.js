@@ -9,6 +9,11 @@ export default class Cursor {
     this.#cursorElement = appElement.querySelector('.cursor');
   }
 
+  /**
+   * Move cursor horizontally
+   * @param {Element} element - HTML Element
+   * @param {Number=} width - override value for bounding box width
+   */
   move(element, width = null) {
     const pixels = this.newCoord(element, width)
     this.#cursorElement.style.left = `${pixels}px`

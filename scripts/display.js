@@ -1,16 +1,43 @@
 import { apiUrl } from "./config.js"
+import { remCls } from "./utils.js"
 
 export default class Display {
-  constructor(displayElement) {
+  constructor(displayElement, cursor) {
+    /** @type {Element} */
     this.displayElement = displayElement
+    // this.cursor = cursor
+    /** @type {Cursor} */
+    this.cursor = cursor
   }
 
-  reset() {
-    console.log('reset display')
+  async create() {
+    const url = this.constructUrl(apiUrl, 154)
+    const apiJson = await this.getApiJson(url)
+    const words = this.convertJsonToWords(apiJson)
+    this.buildWords(words)
   }
 
   restart() {
     console.log('restart display')
+    const resetElement = this.displayElement.querySelector('.reset')
+
+    const counter = this.displayElement.querySelector('.counter')
+    console.log(counter)
+    // counter.innerText = 60
+    this.remElements('.extra')
+    this.displayElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
+    this.displayElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
+    this.cursor.move(this.displayElement, 0)
+  }
+
+  remElements(query) {
+    const elements = this.displayElement.querySelectorAll(query)
+    elements.forEach(el => el.remove())
+  }
+
+  reset() {
+    console.log('reset display')
+    this.restart()
   }
 
   /**
@@ -18,15 +45,13 @@ export default class Display {
    * @param {object} responseJson - json response from api
    * @return {string[]}
    */
-  async getTextFromApi() {
-    const randInt = Math.floor(Math.random() * 154) + 1
-    return await this.getApiJson(`${apiUrl} ${randInt}`)
+  constructUrl(url, entries) {
+    const randInt = Math.floor(Math.random() * entries) + 1
+    return `${url} ${randInt}`
   }
 
-  async convertJsonToWords() {
-    const apiJson = await this.getTextFromApi()
+  convertJsonToWords(apiJson) {
     const lines = apiJson[0].lines
-
     return lines
       .reduce((accum, line) => `${accum} ${line}`, '')
       .trim()
@@ -47,8 +72,7 @@ export default class Display {
     }
   }
 
-  async buildWords() {
-    const words = await this.convertJsonToWords()
+  buildWords(words) {
     const wordsDiv = this.displayElement.querySelector('.words')
 
     words.forEach(word => {
@@ -65,15 +89,6 @@ export default class Display {
 
       wordsDiv.appendChild(wordElement);
       wordsDiv.querySelector('.word').classList.add('active')
-    })
-  }
-  reset() {
-    const resetElement = this.displayElement.querySelector('.reset')
-
-    resetElement.addEventListener('click', () => {
-      appElement.querySelector('.counter').innerText = 60
-      appElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
-      appElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
     })
   }
 }
