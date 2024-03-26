@@ -1,7 +1,7 @@
-import { apiUrl, specialKeys } from "./consts.js"
-import Key from "./key.js"
 import Cursor from "./cursor.js"
-import { getApiJson, buildDivFromWords, convertJsonToWords } from "./utils.js"
+import Display from "./display.js"
+import Key from "./key.js"
+import { specialKeys } from "./config.js"
 
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))
@@ -13,18 +13,37 @@ document.addEventListener('DOMContentLoaded', () => {
  * @return {Promise<void>}
  */
 async function touchTyping(appElement) {
-  const lines = await getApiJson(apiUrl)
-  const words = convertJsonToWords(lines)
-  buildDivFromWords(appElement, words)
+  document.addEventListener('keydown', () => timer(appElement), { once: true })
 
-  document.addEventListener('keydown', (evt) => {
-    const cursor = new Cursor(appElement)
-    const key = new Key(evt, cursor, appElement)
-    type(key, evt)
+  const resetElement = appElement.querySelector('.reset')
+  resetElement.addEventListener('click', () => {
+    appElement.querySelector('.counter').innerText = 60
+    appElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
+    appElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
+
   })
+
+  const counter = appElement.querySelector('.counter')
+  const abortController = new AbortController();
+  const { signal } = abortController
+
+  const display = new Display(appElement.querySelector('.display'))
+  await display.buildWords()
+
+  document.addEventListener('keydown', async (evt) => {
+    if (counter.innerText === '0') abortController.abort()
+
+    const cursor = new Cursor(appElement)
+    const stats = new Stats(appElement)
+    const key = new Key(evt, cursor, appElement)
+
+    await type(key, evt, stats)
+  }, { signal })
 }
 
-async function type(key, evt) {
+async function type(key, evt, stats) {
+  // if (document.querySelector('.counter').innerText === 0) return
+
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
@@ -36,4 +55,38 @@ async function type(key, evt) {
   } else {
     key.next(false)
   }
+  stats.grossWPM()
+}
+
+class Stats {
+  constructor(appElement) {
+    this.statsElement = appElement.querySelector('.stats')
+    this.wordsElement = appElement.querySelector('.words')
+    this.grossWPM()
+  }
+
+  grossWPM() {
+    let correct = this.wordsElement.querySelectorAll('.correct')
+    let incorrect = this.wordsElement.querySelectorAll('.incorrect')
+    correct = correct ? correct.length : 0
+    incorrect = incorrect ? incorrect.length : 0
+
+    const formula = ((correct + incorrect) / 5) * 60
+    this.statsElement.querySelector('.stats > div:first-child').innerText = formula
+  }
+}
+
+
+function timer(element) {
+  const counterElement = element.querySelector('.counter')
+  let count = counterElement.innerText - 1
+
+  let timer = setInterval(() => {
+    counterElement.innerText = count--
+    if (count < 0) clearInterval(timer)
+  }, 1000)
+}
+
+function reset(appElement) {
+  appElement.querySelector('.counter').innerText = 60
 }

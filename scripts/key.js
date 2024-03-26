@@ -122,12 +122,12 @@ export default class Key {
   /**
    * Create new html div element for letter and append it to word, but:
    * - there can't be more than 5 "extra" appended letters
-   * - it can't go beyond the edge of .words-wrapper
+   * - it can't go beyond the edge of .display
    */
   appendLetter() {
     let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
     const wwBBox = this.cursor.getBBox(
-      this.appElement.querySelector('.words-wrapper')
+      this.appElement.querySelector('.display')
     )
 
     if (cursorX > (wwBBox.x + wwBBox.width)) return
