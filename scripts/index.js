@@ -28,17 +28,19 @@ function touchTyping(appElement) {
   console.log(resetElement)
   resetElement.addEventListener('click', () => display.restart())
 
+  const stats = new Stats(appElement)
+  stats.grossWPM()
+  stats.accuracy()
+
   document.addEventListener('keydown', async (evt) => {
     if (counter.innerText === '0') abortController.abort()
-
-    const stats = new Stats(appElement)
     const key = new Key(evt, cursor, appElement)
 
-    type(key, evt, stats, display)
+    type(key, evt, display)
   }, { signal })
 }
 
-function type(key, evt, stats, display) {
+function type(key, evt, display) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
@@ -54,27 +56,61 @@ function type(key, evt, stats, display) {
   } else {
     key.next(false)
   }
-  stats.grossWPM()
 }
 
 class Stats {
   constructor(appElement) {
+    this.appElement = appElement
     this.statsElement = appElement.querySelector('.stats')
     this.wordsElement = appElement.querySelector('.words')
-    this.grossWPM()
+    // this.grossWPM()
   }
 
   grossWPM() {
-    let correct = this.wordsElement.querySelectorAll('.correct')
-    let incorrect = this.wordsElement.querySelectorAll('.incorrect')
-    correct = correct ? correct.length : 0
-    incorrect = incorrect ? incorrect.length : 0
+    let timeElapsed = 0
 
-    const formula = ((correct + incorrect) / 5) * 60
-    this.statsElement.querySelector('.stats > div:first-child').innerText = formula
+    let timer = setInterval(() => {
+      timeElapsed++
+      this.correct = this.wordsElement.querySelectorAll('.correct')
+      this.incorrect = this.wordsElement.querySelectorAll('.incorrect')
+      this.correct = this.correct ? this.correct.length : 0
+      this.incorrect = this.incorrect ? this.incorrect.length : 0
+
+      let corrWords = this.correct / 5
+      corrWords += (corrWords / 5)
+      console.log(Math.floor(corrWords))
+      let wpm = Math.round((corrWords / timeElapsed) * 60);
+
+      const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
+      wpmElement.innerText = wpm
+      const timerElement = this.appElement.querySelector('.counter')
+      if (timerElement.innerText === '0') clearInterval(timer)
+    }, 1000)
+  }
+  accuracy() {
+    // separate accuracy calculation from adding it to element, do the same with wpm
+    // stats should start together with touch typing
+    let timer = setInterval(() => {
+      this.correct = this.wordsElement.querySelectorAll('.correct')
+      this.incorrect = this.wordsElement.querySelectorAll('.incorrect')
+      this.correct = this.correct ? this.correct.length : 0
+      this.incorrect = this.incorrect ? this.incorrect.length : 0
+
+      let accuracy = (this.correct === 0 && this.incorrect === 0)
+        ? 0
+        : ((this.correct / (this.correct + this.incorrect)) * 100)
+
+      const accuracyElement = this.appElement
+        .querySelector('.accuracy > div > div:first-child')
+
+      accuracyElement.innerText = Math.round(accuracy);
+
+      const timerElement = this.appElement.querySelector('.counter')
+
+      if (timerElement.innerText === '0') clearInterval(timer)
+    }, 1000)
   }
 }
-
 
 function timer(element) {
   const counterElement = element.querySelector('.counter')
@@ -86,6 +122,3 @@ function timer(element) {
   }, 1000)
 }
 
-function reset(appElement) {
-  appElement.querySelector('.counter').innerText = 60
-}
