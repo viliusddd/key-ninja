@@ -87,7 +87,7 @@ class Stats {
     let ltrCorrect = 0
 
     for (const word of siblings) {
-      if (!word.classList.contains('error')) ltrTotal++ //count " " after word
+      if (!word.classList.contains('error')) ltrTotal++, ltrCorrect++  //count " " after word
 
       for (const letter of word.childNodes) {
         ltrTotal++
@@ -103,10 +103,8 @@ class Stats {
     return { ltrTotal, ltrCorrect, wrdTotal, wrdCorrect, }
   }
 
-  roundNum(num) {
-    return num.toLocaleString(
-      undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 }
-    )
+  toFixedWithoutZeros(num, precision = 1) {
+    return `${Number.parseFloat(num.toFixed(precision))}`;
   }
 
   /** Refresh WPM and Accuracy statistics every second */
@@ -126,7 +124,7 @@ class Stats {
         .querySelector('.accuracy > div > div:first-child')
 
       if (wpm) wpmElement.innerText = wpm
-      if (accuracy) accElement.innerText = this.roundNum(accuracy)
+      if (accuracy) accElement.innerText = this.toFixedWithoutZeros(accuracy)
 
       const timerElement = this.appElement.querySelector('.counter')
       if (timerElement.innerText === '0') clearInterval(statsRefresh)
