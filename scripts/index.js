@@ -29,8 +29,7 @@ function touchTyping(appElement) {
   resetElement.addEventListener('click', () => display.restart())
 
   const stats = new Stats(appElement)
-  stats.grossWPM()
-  stats.accuracy()
+  stats.refreshStats()
 
   document.addEventListener('keydown', async (evt) => {
     if (counter.innerText === '0') abortController.abort()
@@ -63,51 +62,74 @@ class Stats {
     this.appElement = appElement
     this.statsElement = appElement.querySelector('.stats')
     this.wordsElement = appElement.querySelector('.words')
-    // this.grossWPM()
   }
 
-  grossWPM() {
+  drawGraph() { }
+
+  storeResult() { }
+
+  retrieveResults() { }
+
+  /**
+   * Get total typed words, words with errors,
+   * total letters and letters with errors.
+   * @return {object}
+   */
+  typingStats() {
+    // get all words before active word
+    const siblings = []
+    let element = this.wordsElement.querySelector('.active')
+    if (!element) return
+
+    while (element = element.previousSibling) siblings.push(element)
+
+    let ltrTotal = 0
+    let ltrCorrect = 0
+
+    for (const word of siblings) {
+      if (!word.classList.contains('error')) ltrTotal++ //count " " after word
+
+      for (const letter of word.childNodes) {
+        ltrTotal++
+        if (letter.classList.contains('correct')) ltrCorrect++
+      }
+    }
+
+    const wrdTotal = siblings.length
+    const wrdCorrect = siblings
+      .filter(sib => !sib.classList.contains('error'))
+      .reduce((accum, _) => accum += 1, 0)
+
+    return { ltrTotal, ltrCorrect, wrdTotal, wrdCorrect, }
+  }
+
+  roundNum(num) {
+    return num.toLocaleString(
+      undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 }
+    )
+  }
+
+  /** Refresh WPM and Accuracy statistics every second */
+  refreshStats() {
     let timeElapsed = 0
 
-    let timer = setInterval(() => {
+    let statsRefresh = setInterval(() => {
       timeElapsed++
-      this.correct = this.wordsElement.querySelectorAll('.correct')
-      this.incorrect = this.wordsElement.querySelectorAll('.incorrect')
-      this.correct = this.correct ? this.correct.length : 0
-      this.incorrect = this.incorrect ? this.incorrect.length : 0
+      const stats = this.typingStats()
+      console.log(stats)
 
-      let corrWords = this.correct / 5
-      corrWords += (corrWords / 5)
-      console.log(Math.floor(corrWords))
-      let wpm = Math.round((corrWords / timeElapsed) * 60);
+      const wpm = Math.round(stats.ltrTotal / 5 / timeElapsed * 60);
+      const accuracy = stats.ltrCorrect / stats.ltrTotal * 100
 
       const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
-      wpmElement.innerText = wpm
-      const timerElement = this.appElement.querySelector('.counter')
-      if (timerElement.innerText === '0') clearInterval(timer)
-    }, 1000)
-  }
-  accuracy() {
-    // separate accuracy calculation from adding it to element, do the same with wpm
-    // stats should start together with touch typing
-    let timer = setInterval(() => {
-      this.correct = this.wordsElement.querySelectorAll('.correct')
-      this.incorrect = this.wordsElement.querySelectorAll('.incorrect')
-      this.correct = this.correct ? this.correct.length : 0
-      this.incorrect = this.incorrect ? this.incorrect.length : 0
-
-      let accuracy = (this.correct === 0 && this.incorrect === 0)
-        ? 0
-        : ((this.correct / (this.correct + this.incorrect)) * 100)
-
-      const accuracyElement = this.appElement
+      const accElement = this.appElement
         .querySelector('.accuracy > div > div:first-child')
 
-      accuracyElement.innerText = Math.round(accuracy);
+      if (wpm) wpmElement.innerText = wpm
+      if (accuracy) accElement.innerText = this.roundNum(accuracy)
 
       const timerElement = this.appElement.querySelector('.counter')
-
-      if (timerElement.innerText === '0') clearInterval(timer)
+      if (timerElement.innerText === '0') clearInterval(statsRefresh)
     }, 1000)
   }
 }
