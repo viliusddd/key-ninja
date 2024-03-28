@@ -3,8 +3,13 @@
 @import url(stats.css);
 
 :root {
-  --bg-color: navajowhite;
-  --txt-primary: #000;
+  --bg-color: #CFD8D7;
+  --txtbox-color: #fbeed9;
+  --txt-primary: #000000;
+  --txt-correct: #06842e;
+  --txt-incorrect: #C0091E;
+  --txt-stats: #453831;
+  --cursor-color: #ffbb00;
 }
 
 body {
@@ -13,9 +18,12 @@ body {
 }
 
 .display {
-  height: 75px;
+  margin-top: 1rem;
+  height: 88px;
   overflow: hidden;
   border-radius: 4px;
+  background-color: var(--txtbox-color);
+  padding: 1ch;
 }
 
 .words {
@@ -31,21 +39,16 @@ body {
   display: flex;
   margin: 0.5ch 0;
   color: var(--txt-primary);
-  /* letter-spacing: 0px; */
 }
 
 .cursor {
-  top: 0.21rem;
+  top: 1.7rem;
   height: 2rem;
   width: 2px;
-  background-color: orange;
+  background-color: var(--cursor-color);
   animation: cursorBlinking 1s infinite;
   position: absolute;
   border-radius: 0.5rem;
-  /* transition: 0.05s; */
-  /* /* transform-origin: top left; */
-  /* border: 1px solid red; */
-  /* pointer-events: none; */
 }
 
 @keyframes cursorBlinking {
@@ -64,13 +67,16 @@ body {
 }
 
 nav {
+  align-items: center;
+  margin-top: 1ch;
   display: flex;
   justify-content: right;
+  padding: 0 1ch;
+  color: var(--txt-stats);
 }
 
 .counter {
   display: flex;
-  /* border: 1px solid red; */
   width: 4ch;
   align-items: center;
   justify-content: center;
@@ -83,37 +89,14 @@ nav {
   justify-content: right;
 }
 
-.frame {
-  background-color: transparent;
-  border: 1px solid rgb(111, 110, 110);
-  border-radius: .5rem;
-  box-sizing: border-box;
-  color: #111827;
-  line-height: 1.25rem;
-  /* padding: .75rem 1rem; */
-  text-align: center;
-  text-decoration: none #D1D5DB solid;
-  text-decoration-thickness: auto;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.frame:hover {
-  background-color: #00000009;
-}
-
-.frame:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.frame:focus-visible {
-  box-shadow: none;
-}
-
 .reset {
   border: none;
+  cursor: pointer;
+  /* border: 1px solid red; */
+  background: transparent;
+  padding: 0;
+}
+
+.reset:hover {
+  font-weight: bold;
 }
