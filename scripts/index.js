@@ -22,31 +22,36 @@ function touchTyping(appElement) {
 
 
   const cursor = new Cursor(appElement)
-  const display = new Display(displayElement)
+  const display = new Display(appElement)
 
+  // Restart BTN
   const resetElement = appElement.querySelector('.reset')
-  resetElement.addEventListener('click', () => display.restart(appElement))
+  resetElement.addEventListener('click', () => {
+    display.restart(appElement)
+    cursor.reset()
+  })
 
-  const { startApp, stopApp, appIsRunning } = status(appElement)
+  const { startApp, stopApp, appRunning, appFinished } = status(appElement)
 
   document.addEventListener('keydown', async (evt) => {
-    if (evt.key === 'Enter') display.restart(appElement)
-    if (evt.key === 'Escape') display.reset(appElement)
+    if (evt.key == 'Enter' || evt.key === 'Escape') {
+      if (appFinished() || appRunning()) display.restart(), cursor.reset()
+      if (!appRunning()) return
+    }
 
-    if (!appIsRunning() && !appElement.classList.contains('finished')) {
+    if (!appRunning() && !appFinished()) {
       startApp()
 
       display.timer(appElement)
 
       const stats = new Stats(appElement)
       stats.refreshStats()
-
-    } else if (appElement.classList.contains('finished')) {
-      return
     }
 
-    const key = new Key(evt, cursor, appElement)
-    type(key, evt, display, appElement)
+    if (appRunning()) {
+      const key = new Key(evt, cursor, appElement)
+      type(key, evt, display, appElement)
+    }
 
     // if (appElement.querySelector('.timer').innerText === '0') {
     //   storeResult
