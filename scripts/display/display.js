@@ -95,14 +95,17 @@ export default class Display {
   }
 
   timer(appElement) {
-    const counterElement = appElement.querySelector('.counter')
-    let count = counterElement.innerText
-    // let count = counterElement.innerText - 1
+    const timerElement = appElement.querySelector('.timer')
+    let count = timerTime
 
     let timer = setInterval(() => {
-      if (count < 0) appElement.classList.remove('runs')
-      if (!appElement.classList.contains('runs')) clearInterval(timer)
-      counterElement.innerText = count--
+      timerElement.innerText = count--
+      if (count <= 0) appElement.classList.remove('runs')
+      if (!appElement.classList.contains('runs')) {
+        clearInterval(timer)
+        timerElement.innerText = timerTime
+      }
+
     }, 1000)
   }
 }
