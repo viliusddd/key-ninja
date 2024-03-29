@@ -1,11 +1,13 @@
 import Cursor from "./cursor.js"
-import Display from "./display.js"
+import Display from "./display/display.js"
 import Key from "./key.js"
 import { specialKeys } from "./config.js"
 
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))
 })
+
+let START_STATS = false //! should it really be capitalized?
 
 /**
  * Initialize touch-typing application
@@ -25,21 +27,18 @@ function touchTyping(appElement) {
   display.create()
 
   const resetElement = appElement.querySelector('.reset')
-  console.log(resetElement)
   resetElement.addEventListener('click', () => display.restart())
-
-  const stats = new Stats(appElement)
-  stats.refreshStats()
 
   document.addEventListener('keydown', async (evt) => {
     if (counter.innerText === '0') abortController.abort()
-    const key = new Key(evt, cursor, appElement)
 
-    type(key, evt, display)
+    const key = new Key(evt, cursor, appElement)
+    type(key, evt, display, appElement)
   }, { signal })
+  // stats.storeResult()
 }
 
-function type(key, evt, display) {
+function type(key, evt, display, appElement) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
   } else if (specialKeys.some(item => evt.key === item)) {
@@ -55,6 +54,12 @@ function type(key, evt, display) {
   } else {
     key.next(false)
   }
+
+  if (!START_STATS) {
+    const stats = new Stats(appElement)
+    stats.refreshStats()
+    START_STATS = true
+  }
 }
 
 class Stats {
@@ -66,9 +71,21 @@ class Stats {
 
   drawGraph() { }
 
-  storeResult() { }
+  storeResult() {
+    const match = { wpm: this.statsElement.querySelector('.wpm > div:last-child').innerText }
 
-  retrieveResults() { }
+    let matches = this.retrieveResults()
+
+    if (!matches) matches = []
+
+    matches.push(match)
+
+    window.localStorage.setItem('matches', JSON.stringify(match))
+  }
+
+  retrieveResults() {
+    return JSON.parse(window.localStorage.getItem('matches'))
+  }
 
   /**
    * Get total typed words, words with errors,
@@ -87,7 +104,8 @@ class Stats {
     let ltrCorrect = 0
 
     for (const word of siblings) {
-      if (!word.classList.contains('error')) ltrTotal++, ltrCorrect++  //count " " after word
+      //count " " after word
+      if (!word.classList.contains('error')) ltrTotal++, ltrCorrect++
 
       for (const letter of word.childNodes) {
         ltrTotal++
@@ -114,7 +132,6 @@ class Stats {
     let statsRefresh = setInterval(() => {
       timeElapsed++
       const stats = this.typingStats()
-      console.log(stats)
 
       const wpm = Math.round(stats.ltrTotal / 5 / timeElapsed * 60);
       const accuracy = stats.ltrCorrect / stats.ltrTotal * 100
