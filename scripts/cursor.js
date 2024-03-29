@@ -4,9 +4,16 @@
  */
 export default class Cursor {
   #cursorElement
+  #displayElement
 
   constructor(appElement) {
     this.#cursorElement = appElement.querySelector('.cursor');
+    this.#displayElement = appElement.querySelector('.display')
+    this.reset()
+  }
+
+  reset() {
+    this.move(this.#displayElement, 8)
   }
 
   /**

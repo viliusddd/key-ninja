@@ -11,7 +11,8 @@ export default class Key {
     this._event = event;
     this._cursor = cursor;
     this._appElement = appElement
-    this.initKey();
+
+    this.reset()
   }
 
   get event() {
@@ -24,6 +25,12 @@ export default class Key {
 
   get appElement() {
     return this._appElement
+  }
+
+  reset() {
+    this.initKey()
+    this.cursor.reset()
+    // this.cursor.
   }
 
   initKey() {
