@@ -3,6 +3,7 @@ import Display from "./display/display.js"
 import Key from "./key.js"
 import Stats from "./stats/index.js"
 import { specialKeys } from "./config.js"
+import status from "./status.js"
 
 let APP_RUN = false //! should it really be capitalized?
 
@@ -19,11 +20,9 @@ function touchTyping(appElement) {
   const timer = appElement.querySelector('.timer')
   const displayElement = appElement.querySelector('.display')
 
-  const abortController = new AbortController();
-  const { signal } = abortController
 
   const cursor = new Cursor(appElement)
-  const display = new Display(displayElement, cursor)
+  const display = new Display(displayElement)
 
   const resetElement = appElement.querySelector('.reset')
   resetElement.addEventListener('click', () => display.restart(appElement))
@@ -31,28 +30,29 @@ function touchTyping(appElement) {
   const { startApp, stopApp, appIsRunning } = status(appElement)
 
   document.addEventListener('keydown', async (evt) => {
-    if (counter.innerText === '0') abortController.abort()
-
     if (evt.key === 'Enter') display.restart(appElement)
     if (evt.key === 'Escape') display.reset(appElement)
 
-    const key = new Key(evt, cursor, appElement)
-    type(key, evt, display, appElement)
-
-    if (!appElement.classList.contains('runs')) {
-      appElement.classList.add('runs')
+    if (!appIsRunning() && !appElement.classList.contains('finished')) {
+      startApp()
 
       display.timer(appElement)
 
       const stats = new Stats(appElement)
       stats.refreshStats()
+
+    } else if (appElement.classList.contains('finished')) {
+      return
     }
 
-    // if (appElement.querySelector('.counter').innerText === '0') {
+    const key = new Key(evt, cursor, appElement)
+    type(key, evt, display, appElement)
+
+    // if (appElement.querySelector('.timer').innerText === '0') {
     //   storeResult
     // }
 
-  }, { signal })
+  })
   // stats.storeResult()
 }
 
