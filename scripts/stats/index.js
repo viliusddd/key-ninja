@@ -82,7 +82,7 @@ export default class Stats {
       if (wpm) wpmElement.innerText = wpm
       if (accuracy) accElement.innerText = this.toFixedWithoutZeros(accuracy)
 
-      const timerElement = this.appElement.querySelector('.counter')
+      const timerElement = this.appElement.querySelector('.timer')
       if (timerElement.innerText === '0') clearInterval(statsRefresh)
     }, 1000)
   }

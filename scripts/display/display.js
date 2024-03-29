@@ -20,9 +20,9 @@ export default class Display {
     console.log('restart display')
     const resetElement = this.displayElement.querySelector('.reset')
 
-    const counter = appElement.querySelector('.counter')
-    console.log(counter)
-    counter.innerText = timerTime
+    const timer = appElement.querySelector('.timer')
+    console.log(timer)
+    timer.innerText = timerTime
     this.remElements('.extra')
     this.displayElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
     this.displayElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')

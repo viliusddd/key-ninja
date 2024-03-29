@@ -75,7 +75,7 @@ nav {
   color: var(--txt-stats);
 }
 
-.counter {
+.timer {
   display: flex;
   width: 4ch;
   align-items: center;

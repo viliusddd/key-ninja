@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @return {Promise<void>}
  */
 function touchTyping(appElement) {
-  const counter = appElement.querySelector('.counter')
+  const timer = appElement.querySelector('.timer')
   const displayElement = appElement.querySelector('.display')
 
   const abortController = new AbortController();
