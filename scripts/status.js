@@ -3,6 +3,7 @@ export default (appElement) => {
   return {
     startApp: () => appElement.classList.add(runs),
     stopApp: () => appElement.classList.remove(runs),
-    appIsRunning: () => appElement.classList.contains(runs)
+    appRunning: () => appElement.classList.contains(runs),
+    appFinished: () => appElement.classList.contains('finished')
   }
 }
