@@ -1,13 +1,11 @@
-import { apiUrl } from "./config.js"
-import { remCls } from "./utils.js"
+import { apiUrl, timerTime } from "../config.js"
 
 export default class Display {
   constructor(displayElement, cursor) {
-    /** @type {Element} */
     this.displayElement = displayElement
-    // this.cursor = cursor
-    /** @type {Cursor} */
     this.cursor = cursor
+
+    this.create()
   }
 
   async create() {
@@ -17,27 +15,31 @@ export default class Display {
     this.buildWords(words)
   }
 
-  restart() {
+  restart(appElement) {
+    appElement.classList.remove('runs')
     console.log('restart display')
     const resetElement = this.displayElement.querySelector('.reset')
 
-    const counter = this.displayElement.querySelector('.counter')
+    const counter = appElement.querySelector('.counter')
     console.log(counter)
-    // counter.innerText = 60
+    counter.innerText = timerTime
     this.remElements('.extra')
     this.displayElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
     this.displayElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
     this.cursor.move(this.displayElement, 0)
+    this.create()
+  }
+
+  reset(appElement) {
+    console.log('>', appElement)
+    appElement.classList.remove('runs')
+    console.log('reset display')
+    this.restart()
   }
 
   remElements(query) {
     const elements = this.displayElement.querySelectorAll(query)
     elements.forEach(el => el.remove())
-  }
-
-  reset() {
-    console.log('reset display')
-    this.restart()
   }
 
   /**
@@ -91,4 +93,17 @@ export default class Display {
       wordsDiv.querySelector('.word').classList.add('active')
     })
   }
+
+  timer(appElement) {
+    const counterElement = appElement.querySelector('.counter')
+    let count = counterElement.innerText
+    // let count = counterElement.innerText - 1
+
+    let timer = setInterval(() => {
+      if (count < 0) appElement.classList.remove('runs')
+      if (!appElement.classList.contains('runs')) clearInterval(timer)
+      counterElement.innerText = count--
+    }, 1000)
+  }
 }
+
