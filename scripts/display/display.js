@@ -1,8 +1,9 @@
 import { apiUrl, timerTime } from "../config.js"
 
 export default class Display {
-  constructor(displayElement) {
-    this.displayElement = displayElement
+  constructor(appElement) {
+    this.appElement = appElement
+    this.displayElement = appElement.firstElementChild
 
     this.create()
   }
@@ -12,27 +13,28 @@ export default class Display {
     const apiJson = await this.getApiJson(url)
     const words = this.convertJsonToWords(apiJson)
     this.buildWords(words)
+    this.setTimerElement(timerTime)
+
   }
 
-  restart(appElement) {
-    appElement.classList.remove('runs')
+  restart() {
     console.log('restart display')
-    const resetElement = this.displayElement.querySelector('.reset')
 
+    this.appElement.classList.remove('runs', 'finished')
 
-    appElement.classList.remove('finished')
-    const timer = appElement.querySelector('.timer')
-    console.log(timer)
+    const timer = this.appElement.querySelector('.timer')
     timer.innerText = timerTime
+
     this.remElements('.extra')
-    this.displayElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
-    this.displayElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
+    this.displayElement.querySelectorAll('.letter')
+      .forEach(el => el.className = 'letter')
+    this.displayElement.querySelectorAll('.word')
+      .forEach(elm => elm.className = 'word')
+
     this.create()
   }
 
-  reset(appElement) {
-    console.log('>', appElement)
-    appElement.classList.remove('runs')
+  reset() {
     console.log('reset display')
     this.restart()
   }
@@ -40,6 +42,10 @@ export default class Display {
   remElements(query) {
     const elements = this.displayElement.querySelectorAll(query)
     elements.forEach(el => el.remove())
+  }
+
+  setTimerElement(time) {
+    this.appElement.querySelector('.timer').innerText = time
   }
 
   /**
