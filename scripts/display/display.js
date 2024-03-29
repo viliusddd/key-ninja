@@ -1,9 +1,8 @@
 import { apiUrl, timerTime } from "../config.js"
 
 export default class Display {
-  constructor(displayElement, cursor) {
+  constructor(displayElement) {
     this.displayElement = displayElement
-    this.cursor = cursor
 
     this.create()
   }
@@ -20,13 +19,14 @@ export default class Display {
     console.log('restart display')
     const resetElement = this.displayElement.querySelector('.reset')
 
+
+    appElement.classList.remove('finished')
     const timer = appElement.querySelector('.timer')
     console.log(timer)
     timer.innerText = timerTime
     this.remElements('.extra')
     this.displayElement.querySelectorAll('.letter').forEach(el => el.className = 'letter')
     this.displayElement.querySelectorAll('.word').forEach(elm => elm.className = 'word')
-    this.cursor.move(this.displayElement, 0)
     this.create()
   }
 
@@ -97,13 +97,18 @@ export default class Display {
   timer(appElement) {
     const timerElement = appElement.querySelector('.timer')
     let count = timerTime
+    count--
 
     let timer = setInterval(() => {
       timerElement.innerText = count--
-      if (count <= 0) appElement.classList.remove('runs')
+
+      if (count < 0) {
+        appElement.classList.remove('runs')
+        appElement.classList.add('finished')
+      }
       if (!appElement.classList.contains('runs')) {
         clearInterval(timer)
-        timerElement.innerText = timerTime
+        // timerElement.innerText = timerTime
       }
 
     }, 1000)
