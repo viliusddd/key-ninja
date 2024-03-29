@@ -3,4 +3,4 @@ export const specialKeys = [
   'Control', 'Shift', 'Meta', 'Alt', 'ArrowUp', 'ArrowDown', 'ArrowLeft',
   'ArrowRight', '§', 'Tab'
 ]
-export const timerTime = 5 // in seconds
+export const timerTime = 3 // in seconds
