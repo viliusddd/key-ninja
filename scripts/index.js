@@ -20,18 +20,20 @@ function touchTyping(appElement) {
   const timer = appElement.querySelector('.timer')
   const displayElement = appElement.querySelector('.display')
 
-
   const cursor = new Cursor(appElement)
   const display = new Display(appElement)
 
   // Restart BTN
   const resetElement = appElement.querySelector('.reset')
   resetElement.addEventListener('click', () => {
-    display.restart(appElement)
+    display.restart()
     cursor.reset()
+    resetElement.blur() // remove focus after Shift key press
   })
 
   const { startApp, stopApp, appRunning, appFinished } = status(appElement)
+
+  const stats = new Stats(appElement)
 
   document.addEventListener('keydown', async (evt) => {
     if (evt.key == 'Enter' || evt.key === 'Escape') {
@@ -44,13 +46,17 @@ function touchTyping(appElement) {
 
       display.timer(appElement)
 
-      const stats = new Stats(appElement)
       stats.refreshStats()
     }
 
     if (appRunning()) {
       const key = new Key(evt, cursor, appElement)
       type(key, evt, display, appElement)
+    }
+
+    if (appFinished()) {
+      stats.storeResult()
+      stats.chart()
     }
 
     // if (appElement.querySelector('.timer').innerText === '0') {

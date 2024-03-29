@@ -5,22 +5,28 @@ export default class Stats {
     this.wordsElement = appElement.querySelector('.words')
   }
 
-  drawGraph() { }
-
   storeResult() {
-    const match = { wpm: this.statsElement.querySelector('.wpm > div:last-child').innerText }
+    const date = new Date().toLocaleString();
+    const wpm = this.statsElement.querySelector('.wpm > div:last-child').innerText
+    const accuracy = this.statsElement.querySelector('.accuracy > div > div').innerText
+    const match = { wpm, date, accuracy }
 
-    let matches = this.retrieveResults()
+    let matches = this.retrieveItem('matches')
+    if (matches) matches = matches.slice(-19)
 
-    if (!matches) matches = []
+    if (!matches) {
+      matches = [match]
+    }
 
     matches.push(match)
 
-    window.localStorage.setItem('matches', JSON.stringify(match))
+    window.localStorage.setItem('matches', JSON.stringify(matches))
   }
 
-  retrieveResults() {
-    return JSON.parse(window.localStorage.getItem('matches'))
+  retrieveItem(itemName) {
+    if (window.localStorage.getItem(itemName)) {
+      return JSON.parse(window.localStorage.getItem(itemName))
+    }
   }
 
   /**
@@ -54,7 +60,6 @@ export default class Stats {
       .filter(sib => !sib.classList.contains('error'))
       .reduce((accum, _) => accum += 1, 0)
 
-    console.log(ltrTotal, ltrCorrect, wrdTotal, wrdCorrect)
     return { ltrTotal, ltrCorrect, wrdTotal, wrdCorrect, }
   }
 
@@ -85,5 +90,50 @@ export default class Stats {
       const timerElement = this.appElement.querySelector('.timer')
       if (timerElement.innerText === '0') clearInterval(statsRefresh)
     }, 1000)
+  }
+
+  chart() {
+    const matches = this.retrieveItem('matches')
+    console.log(matches)
+
+    new Chart("chart", {
+      type: "line",
+      data: {
+        labels: matches.map(res => res.date),
+        datasets: [{
+          data: matches.map(res => res.wpm),
+          fill: true,
+          lineTension: 0,
+          borderColor: "rgba(0,0,255,0.1)"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            displayColors: false,
+            enabled: true,
+            callbacks: {
+              beforeTitle: context => {
+                return `${matches[context[0].dataIndex].date}`
+              },
+              title: context => {
+                return `${matches[context[0].dataIndex].wpm} WPM`
+              },
+              label: context => {
+                console.log(context)
+                return `${matches[context.dataIndex].accuracy}% accuracy`
+              }
+            },
+          },
+        },
+        legend: { display: false },
+        scales: {
+          y: { ticks: { min: 0, max: 100 } },
+          x: { ticks: { display: false } }
+        }
+      }
+    });
   }
 }

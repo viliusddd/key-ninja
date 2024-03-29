@@ -46,3 +46,13 @@
   margin-right: auto;
   gap: 2ch;
 }
+
+.chart {
+  max-height: 100%;
+  margin: 1ch 0;
+  /* background-color: var(--txtbox-color); */
+}
+
+#chart {
+  display: none;
+}

@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <script src="scripts/index.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
 <body class="wrapper">
     <div class="app">
@@ -34,6 +35,10 @@
             <span class="timer"></span>
             <button class="reset">Restart</button>
         </nav>
+        <div class="chart">
+            <canvas id="chart"></canvas>
+        </div>
+            <canvas class="chart" style="width:100%;max-width:700px"></canvas>
         </div>
     </div>
 </body>
