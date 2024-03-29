@@ -28,6 +28,8 @@ function touchTyping(appElement) {
   const resetElement = appElement.querySelector('.reset')
   resetElement.addEventListener('click', () => display.restart(appElement))
 
+  const { startApp, stopApp, appIsRunning } = status(appElement)
+
   document.addEventListener('keydown', async (evt) => {
     if (counter.innerText === '0') abortController.abort()
 
