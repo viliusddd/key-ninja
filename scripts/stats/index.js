@@ -6,9 +6,13 @@ export default class Stats {
   }
 
   storeResult() {
-    const date = new Date().toLocaleString();
     const wpm = this.statsElement.querySelector('.wpm > div:last-child').innerText
     const accuracy = this.statsElement.querySelector('.accuracy > div > div').innerText
+    const date = Intl.DateTimeFormat("lt", {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date())
+
     const match = { wpm, date, accuracy }
 
     let matches = this.retrieveItem('matches')
