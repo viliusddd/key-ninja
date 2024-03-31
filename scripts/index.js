@@ -3,7 +3,8 @@ import Display from "./display/display.js"
 import Key from "./key.js"
 import Stats from "./stats/index.js"
 import { specialKeys } from "./config.js"
-import status from "./status.js"
+import appStatus from "./appStatus.js"
+import chartStatus from "./stats/chartStatus.js"
 
 let APP_RUN = false //! should it really be capitalized?
 
@@ -31,7 +32,8 @@ function touchTyping(appElement) {
     resetElement.blur() // remove focus after Shift key press
   })
 
-  const { startApp, stopApp, appRunning, appFinished } = status(appElement)
+  const { startApp, stopApp, appRunning, appFinished } = appStatus(appElement)
+  const { chartToggle, chartDrawn } = chartStatus(appElement.querySelector('.chart'))
 
   const stats = new Stats(appElement)
 
@@ -54,9 +56,10 @@ function touchTyping(appElement) {
       type(key, evt, display, appElement)
     }
 
-    if (appFinished()) {
+    if (appFinished() && !chartDrawn()) {
       stats.storeResult()
       stats.chart()
+      chartToggle()
     }
 
     // if (appElement.querySelector('.timer').innerText === '0') {

@@ -31,6 +31,17 @@ export default class Display {
     this.displayElement.querySelectorAll('.word')
       .forEach(elm => elm.className = 'word')
 
+    // chart
+    const chart = this.appElement.querySelector('.chart')
+    chart.className = 'chart'
+    chart.classList.add('hidden')
+
+    let chartStatus = Chart.getChart("chart"); // <canvas> id
+    console.log(chartStatus)
+    if (chartStatus != undefined) {
+      chartStatus.destroy();
+    }
+
     this.create()
   }
 
