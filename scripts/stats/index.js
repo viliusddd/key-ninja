@@ -5,6 +5,11 @@ export default class Stats {
     this.wordsElement = appElement.querySelector('.words')
   }
 
+  storeSession(item) {
+    const { itemKey, itemVal } = item
+    sessionStorage.setItem({ itemKey, itemVal })
+  }
+
   storeResult() {
     const wpm = this.statsElement.querySelector('.wpm > div:last-child').innerText
     const accuracy = this.statsElement.querySelector('.accuracy > div > div').innerText
@@ -13,7 +18,7 @@ export default class Stats {
       timeStyle: 'short',
     }).format(new Date())
 
-    const match = { wpm, date, accuracy }
+    const match = JSON.parse(sessionStorage.getItem('stats'))
 
     let matches = this.retrieveItem('matches')
     if (matches) matches = matches.slice(-19)
@@ -28,8 +33,8 @@ export default class Stats {
   }
 
   retrieveItem(itemName) {
-    if (window.localStorage.getItem(itemName)) {
-      return JSON.parse(window.localStorage.getItem(itemName))
+    if (localStorage.getItem(itemName)) {
+      return JSON.parse(localStorage.getItem(itemName))
     }
   }
 
@@ -38,7 +43,7 @@ export default class Stats {
    * total letters and letters with errors.
    * @return {object}
    */
-  typingStats() {
+  typingStats(timeElapsed = null) {
     // get all words before active word
     const siblings = []
     let element = this.wordsElement.querySelector('.active')
@@ -59,16 +64,31 @@ export default class Stats {
       }
     }
 
+    const date = Intl.DateTimeFormat("lt", {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date())
     const wrdTotal = siblings.length
     const wrdCorrect = siblings
       .filter(sib => !sib.classList.contains('error'))
       .reduce((accum, _) => accum += 1, 0)
 
-    return { ltrTotal, ltrCorrect, wrdTotal, wrdCorrect, }
+    const stats = {
+      date,
+      wpm: Math.round(ltrTotal / 5 / timeElapsed * 60),
+      accuracy: this.toFixedWithoutZeros(ltrCorrect / ltrTotal * 100),
+      keystrokes: ltrTotal,
+      corerctWords: wrdCorrect,
+      wrongWords: wrdTotal - wrdCorrect,
+      corrections: parseInt(sessionStorage.getItem('corrections')),
+    }
+    console.log(stats)
+    sessionStorage.setItem('stats', JSON.stringify(stats))
+    return stats
   }
 
   toFixedWithoutZeros(num, precision = 1) {
-    return `${Number.parseFloat(num.toFixed(precision))}`;
+    return Number.parseFloat(num.toFixed(precision));
   }
 
   /** Refresh WPM and Accuracy statistics every second */
@@ -79,17 +99,14 @@ export default class Stats {
       if (!this.appElement.classList.contains('runs')) return
 
       timeElapsed++
-      const stats = this.typingStats()
-
-      const wpm = Math.round(stats.ltrTotal / 5 / timeElapsed * 60);
-      const accuracy = stats.ltrCorrect / stats.ltrTotal * 100
+      const typingStats = this.typingStats(timeElapsed)
 
       const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
       const accElement = this.appElement
         .querySelector('.accuracy > div > div:first-child')
 
-      if (wpm) wpmElement.innerText = wpm
-      if (accuracy) accElement.innerText = this.toFixedWithoutZeros(accuracy)
+      if (typingStats.wpm) wpmElement.innerText = typingStats.wpm
+      if (typingStats.accuracy) accElement.innerText = typingStats.accuracy
 
       const timerElement = this.appElement.querySelector('.timer')
       if (timerElement.innerText === '0') clearInterval(statsRefresh)
@@ -98,46 +115,59 @@ export default class Stats {
 
   chart() {
     const matches = this.retrieveItem('matches')
-    console.log(matches)
+    console.log('matches: ', matches)
 
-    new Chart("chart", {
-      type: "line",
-      data: {
-        labels: matches.map(res => res.date),
-        datasets: [{
-          data: matches.map(res => res.wpm),
-          fill: true,
-          lineTension: 0,
-          borderColor: "rgba(0,0,255,0.1)"
-        }]
+    const data = {
+      labels: matches.map(res => res.date),
+      datasets: [{
+        data: matches.map(res => res.wpm),
+        fill: true,
+        lineTension: 0,
+        borderColor: "rgba(0,0,255,0.1)"
+      }]
+    }
+
+    const callbacks = {
+      beforeTitle: context => {
+        return `${matches[context[0].dataIndex].date}`
       },
+      title: context => {
+        return `${matches[context[0].dataIndex].wpm} WPM`
+      },
+      afterTitle: context => {
+        return `${matches[context[0].dataIndex].accuracy}% accuracy`
+      },
+      label: context => {
+        return [
+          `${matches[context.dataIndex].keystrokes} keystrokes`,
+          `${matches[context.dataIndex].corerctWords} correct words`,
+          `${matches[context.dataIndex].wrongWords} wrong words`,
+          `${matches[context.dataIndex].corrections} corrections`,
+        ]
+      },
+    }
+
+    const config = {
+      type: "line",
+      data,
       options: {
         responsive: true,
+        legend: { display: false },
+        scales: {
+          y: { ticks: { min: 0, max: 100 } },
+          x: { ticks: { display: false } }
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
             displayColors: false,
             enabled: true,
-            callbacks: {
-              beforeTitle: context => {
-                return `${matches[context[0].dataIndex].date}`
-              },
-              title: context => {
-                return `${matches[context[0].dataIndex].wpm} WPM`
-              },
-              label: context => {
-                console.log(context)
-                return `${matches[context.dataIndex].accuracy}% accuracy`
-              }
-            },
+            callbacks,
           },
         },
-        legend: { display: false },
-        scales: {
-          y: { ticks: { min: 0, max: 100 } },
-          x: { ticks: { display: false } }
-        }
       }
-    });
+    }
+
+    new Chart("chart", config);
   }
 }

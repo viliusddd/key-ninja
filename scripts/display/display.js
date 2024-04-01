@@ -22,8 +22,8 @@ export default class Display {
 
     this.appElement.classList.remove('runs', 'finished')
 
-    const timer = this.appElement.querySelector('.timer')
-    timer.innerText = timerTime
+    const timerElement = this.appElement.querySelector('.timer')
+    timerElement.innerText = timerTime
 
     this.remElements('.extra')
     this.displayElement.querySelectorAll('.letter')
@@ -32,12 +32,11 @@ export default class Display {
       .forEach(elm => elm.className = 'word')
 
     // chart
-    const chart = this.appElement.querySelector('.chart')
-    chart.className = 'chart'
-    chart.classList.add('hidden')
+    const chartElement = this.appElement.querySelector('.chart')
+    chartElement.className = 'chart'
+    chartElement.classList.add('hidden')
 
     let chartStatus = Chart.getChart("chart"); // <canvas> id
-    console.log(chartStatus)
     if (chartStatus != undefined) {
       chartStatus.destroy();
     }

@@ -36,9 +36,10 @@ function touchTyping(appElement) {
   const { chartToggle, chartDrawn } = chartStatus(appElement.querySelector('.chart'))
 
   const stats = new Stats(appElement)
+  let corrections = 0
 
   document.addEventListener('keydown', async (evt) => {
-    if (evt.key == 'Enter' || evt.key === 'Escape') {
+    if (evt.key === 'Enter' || evt.key === 'Escape') {
       if (appFinished() || appRunning()) display.restart(), cursor.reset()
       if (!appRunning()) return
     }
@@ -47,11 +48,17 @@ function touchTyping(appElement) {
       startApp()
 
       display.timer(appElement)
-
       stats.refreshStats()
+      sessionStorage.setItem('corrections', 0)
+      console.log('set corrections to 0')
     }
 
     if (appRunning()) {
+      if (evt.key === 'Backspace') {
+        corrections++
+        sessionStorage.setItem('corrections', corrections)
+      }
+
       const key = new Key(evt, cursor, appElement)
       type(key, evt, display, appElement)
     }
