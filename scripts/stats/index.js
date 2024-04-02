@@ -49,10 +49,12 @@ export default class Stats {
   typingStats(timeElapsed = null) {
     // get all words before active word
     const siblings = []
-    let element = this.wordsElement.querySelector('.active')
-    if (!element) return
+    let activeElement = this.wordsElement.querySelector('.active')
+    if (!activeElement) return
 
-    while (element = element.previousSibling) siblings.push(element)
+    while (activeElement = activeElement.previousSibling) {
+      siblings.push(activeElement)
+    }
 
     let keystrokes = 0
     let keysCorrect = 0
@@ -112,7 +114,6 @@ export default class Stats {
       datasets: [{
         data: matches.map(res => res.wpm),
         fill: true,
-        lineTension: 0,
         borderColor: "rgba(0,0,255,0.1)"
       }]
     }

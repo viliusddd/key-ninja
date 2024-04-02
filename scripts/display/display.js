@@ -1,7 +1,6 @@
 import { apiUrl, timerTime } from "../config.js"
 
 let CURRENT_API_URL = ''
-let RESTART = false
 
 export default class Display {
   constructor(appElement, stats) {
@@ -31,11 +30,15 @@ export default class Display {
     this.timerElement.innerText = `${time}s`
   }
 
+  resetStatsElements() {
+    this.stats.accElement.innerText = 0
+    this.stats.wpmElement.innerText = 0
+  }
+
   resetDisplay() {
     // Remove old .word elements
     this.displayElement.querySelector('.words').replaceChildren()
-    this.appElement.classList.remove('runs', 'finished')
-
+    this.appElement.classList.remove('finished', 'runs')
   }
 
   resetChart() {
@@ -46,10 +49,14 @@ export default class Display {
   }
 
   restart(reset = null) {
-    RESTART = true
+
+    if (this.timerElement.innerText !== '0s') {
+      this.appElement.classList.add('cancel')
+    }
 
     this.resetDisplay()
     this.resetChart()
+    this.resetStatsElements()
 
     if (reset) {
       this.create()
@@ -126,20 +133,19 @@ export default class Display {
       this.updateTimerElement(timer)
       this.stats.refresh(timeElapsed)
 
-      if ((timer == 0) || RESTART) {
-        if (!RESTART) {
-          this.stats.storeResult()
-          this.stats.chart()
-          console.log('stop app')
-        }
+      if (this.appElement.classList.contains('cancel')) {
+        clearInterval(timerInterval)
+        this.appElement.classList.remove('runs', 'cancel')
+      } else if (this.appElement.classList.contains('restart')) {
+        clearInterval(timerInterval)
+        this.appElement.classList.remove('runs', 'restart')
+      } else if (timer === 0) {
+        this.stats.storeResult()
+        this.stats.chart()
 
         clearInterval(timerInterval)
-
-        appElement.className = 'app finished'
-
-        RESTART = false
-
-        return
+        this.appElement.classList.remove('runs')
+        appElement.classList.add('finished')
       }
     }, 1000)
   }
