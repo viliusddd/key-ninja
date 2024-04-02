@@ -38,6 +38,13 @@ export default class Stats {
     }
   }
 
+  dateTimeNow() {
+    return Intl.DateTimeFormat("lt", {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date())
+  }
+
   /**
    * Get total typed words, words with errors,
    * total letters and letters with errors.
@@ -51,37 +58,40 @@ export default class Stats {
 
     while (element = element.previousSibling) siblings.push(element)
 
-    let ltrTotal = 0
-    let ltrCorrect = 0
+    let keystrokes = 0
+    let keysCorrect = 0
 
     for (const word of siblings) {
-      //count " " after word
-      if (!word.classList.contains('error')) ltrTotal++, ltrCorrect++
+      //count " " after words
+      if (!word.classList.contains('error')) keystrokes++, keysCorrect++
 
       for (const letter of word.childNodes) {
-        ltrTotal++
-        if (letter.classList.contains('correct')) ltrCorrect++
+        keystrokes++
+        if (letter.classList.contains('correct')) keysCorrect++
       }
     }
 
-    const date = Intl.DateTimeFormat("lt", {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    }).format(new Date())
     const wrdTotal = siblings.length
-    const wrdCorrect = siblings
+
+    const correctWords = siblings
       .filter(sib => !sib.classList.contains('error'))
       .reduce((accum, _) => accum += 1, 0)
 
+    let accuracy = 0
+    if (keystrokes > 0) {
+      accuracy = this.toFixedWithoutZeros(keysCorrect / keystrokes * 100)
+    }
+
     const stats = {
-      date,
-      wpm: Math.round(ltrTotal / 5 / timeElapsed * 60),
-      accuracy: this.toFixedWithoutZeros(ltrCorrect / ltrTotal * 100),
-      keystrokes: ltrTotal,
-      corerctWords: wrdCorrect,
-      wrongWords: wrdTotal - wrdCorrect,
+      date: this.dateTimeNow(),
+      wpm: Math.round(keystrokes / 5 / timeElapsed * 60),
+      accuracy,
+      keystrokes,
+      correctWords,
+      wrongWords: wrdTotal - correctWords,
       corrections: parseInt(sessionStorage.getItem('corrections')),
     }
+
     sessionStorage.setItem('stats', JSON.stringify(stats))
     return stats
   }
@@ -91,14 +101,15 @@ export default class Stats {
   }
 
   refresh(timeElapsed) {
-    const typingStats = this.typingStats(timeElapsed)
-
     const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
     const accElement = this.appElement
       .querySelector('.accuracy > div > div:first-child')
 
-    if (typingStats.wpm) wpmElement.innerText = typingStats.wpm
-    if (typingStats.accuracy) accElement.innerText = typingStats.accuracy
+    const typingStats = this.typingStats(timeElapsed)
+    if (typingStats) {
+      wpmElement.innerText = typingStats.wpm
+      accElement.innerText = typingStats.accuracy
+    }
   }
 
   chart() {
@@ -127,7 +138,7 @@ export default class Stats {
       label: context => {
         return [
           `${matches[context.dataIndex].keystrokes} keystrokes`,
-          `${matches[context.dataIndex].corerctWords} correct words`,
+          `${matches[context.dataIndex].correctWords} correct words`,
           `${matches[context.dataIndex].wrongWords} wrong words`,
           `${matches[context.dataIndex].corrections} corrections`,
         ]

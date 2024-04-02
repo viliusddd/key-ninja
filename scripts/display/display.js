@@ -1,6 +1,7 @@
 import { apiUrl, timerTime } from "../config.js"
 
 let CURRENT_API_URL = ''
+let RESTART = false
 
 export default class Display {
   constructor(appElement, stats) {
@@ -19,14 +20,20 @@ export default class Display {
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
-    this.timerElement.innerText = timerTime
+    this.updateTimerElement(timerTime)
     CURRENT_API_URL = url
+  }
+
+  /**
+   * @param {number} time - number in seconds.
+   */
+  updateTimerElement(time) {
+    this.timerElement.innerText = `${time}s`
   }
 
   resetDisplay() {
     // Remove old .word elements
     this.displayElement.querySelector('.words').replaceChildren()
-
     this.appElement.classList.remove('runs', 'finished')
 
   }
@@ -39,6 +46,8 @@ export default class Display {
   }
 
   restart(reset = null) {
+    RESTART = true
+
     this.resetDisplay()
     this.resetChart()
 
@@ -110,28 +119,27 @@ export default class Display {
     let timer = timerTime
     let timeElapsed = 0
 
-    let timerInterval = setInterval(() => {
+    const timerInterval = setInterval(() => {
       timer--
       timeElapsed++
 
-      this.timerElement.innerText = timer
+      this.updateTimerElement(timer)
+      this.stats.refresh(timeElapsed)
 
-      if (timer == 0) {
+      if ((timer == 0) || RESTART) {
+        if (!RESTART) {
+          this.stats.storeResult()
+          this.stats.chart()
+          console.log('stop app')
+        }
+
         clearInterval(timerInterval)
-
-        this.stats.storeResult()
-        this.stats.chart()
 
         appElement.className = 'app finished'
 
+        RESTART = false
+
         return
-      }
-
-      this.stats.refresh(timeElapsed)
-
-      if (timer < 0) {
-        appElement.classList.remove('runs')
-        appElement.classList.add('finished')
       }
     }, 1000)
   }
