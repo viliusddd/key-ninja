@@ -3,6 +3,9 @@ export default class Stats {
     this.appElement = appElement
     this.statsElement = appElement.querySelector('.stats')
     this.wordsElement = appElement.querySelector('.words')
+    this.accElement = appElement.querySelector('.accuracy > div > div')
+    this.wpmElement = appElement.querySelector('.wpm > div:last-child')
+
   }
 
   storeSession(item) {
@@ -11,13 +14,6 @@ export default class Stats {
   }
 
   storeResult() {
-    const wpm = this.statsElement.querySelector('.wpm > div:last-child').innerText
-    const accuracy = this.statsElement.querySelector('.accuracy > div > div').innerText
-    const date = Intl.DateTimeFormat("lt", {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    }).format(new Date())
-
     const match = JSON.parse(sessionStorage.getItem('stats'))
 
     let matches = this.retrieveItem('matches')
@@ -101,14 +97,10 @@ export default class Stats {
   }
 
   refresh(timeElapsed) {
-    const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
-    const accElement = this.appElement
-      .querySelector('.accuracy > div > div:first-child')
-
     const typingStats = this.typingStats(timeElapsed)
     if (typingStats) {
-      wpmElement.innerText = typingStats.wpm
-      accElement.innerText = typingStats.accuracy
+      this.wpmElement.innerText = typingStats.wpm
+      this.accElement.innerText = typingStats.accuracy
     }
   }
 
