@@ -12,7 +12,7 @@ export default class Key {
     this._cursor = cursor;
     this._appElement = appElement
 
-    this.reset()
+    this.initKey()
   }
 
   get event() {

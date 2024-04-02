@@ -82,7 +82,6 @@ export default class Stats {
       wrongWords: wrdTotal - wrdCorrect,
       corrections: parseInt(sessionStorage.getItem('corrections')),
     }
-    console.log(stats)
     sessionStorage.setItem('stats', JSON.stringify(stats))
     return stats
   }
@@ -115,7 +114,6 @@ export default class Stats {
 
   chart() {
     const matches = this.retrieveItem('matches')
-    console.log('matches: ', matches)
 
     const data = {
       labels: matches.map(res => res.date),

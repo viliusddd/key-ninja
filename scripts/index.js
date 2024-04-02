@@ -48,7 +48,6 @@ function touchTyping(appElement) {
       display.timer(appElement)
       stats.refreshStats()
       sessionStorage.setItem('corrections', 0)
-      console.log('set corrections to 0')
     }
 
     if (appRunning()) {
