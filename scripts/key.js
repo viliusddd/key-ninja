@@ -132,12 +132,12 @@ export default class Key {
    * - it can't go beyond the edge of .display
    */
   appendLetter() {
-    let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 24)
-    const wwBBox = this.cursor.getBBox(
+    let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 32)
+    const displayBBox = this.cursor.getBBox(
       this.appElement.querySelector('.display')
     )
 
-    if (cursorX > (wwBBox.x + wwBBox.width)) return
+    if (cursorX > (displayBBox.x + displayBBox.width)) return
     if (this.activeWord.querySelectorAll('.extra').length === 5) return
 
     const div = document.createElement('div')
