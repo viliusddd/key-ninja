@@ -108,6 +108,7 @@ export default class Stats {
       if (typingStats.accuracy) accElement.innerText = typingStats.accuracy
 
       const timerElement = this.appElement.querySelector('.timer')
+
       if (timerElement.innerText === '0') clearInterval(statsRefresh)
     }, 1000)
   }

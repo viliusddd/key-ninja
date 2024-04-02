@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function touchTyping(appElement) {
   const cursor = new Cursor(appElement)
-  const display = new Display(appElement)
+  const stats = new Stats(appElement)
+  const display = new Display(appElement, stats)
 
   // Restart BTN
   const resetElement = appElement.querySelector('.reset')
@@ -28,9 +29,7 @@ function touchTyping(appElement) {
   })
 
   const { startApp, stopApp, appRunning, appFinished } = appStatus(appElement)
-  const { chartToggle, chartDrawn } = chartStatus(appElement.querySelector('.chart'))
 
-  const stats = new Stats(appElement)
   let corrections = 0
 
   document.addEventListener('keydown', async (evt) => {
@@ -46,7 +45,6 @@ function touchTyping(appElement) {
       startApp()
 
       display.timer(appElement)
-      stats.refreshStats()
       sessionStorage.setItem('corrections', 0)
     }
 
@@ -58,12 +56,6 @@ function touchTyping(appElement) {
 
       const key = new Key(evt, cursor, appElement)
       type(key, evt, display, appElement)
-    }
-
-    if (appFinished() && !chartDrawn()) {
-      stats.storeResult()
-      stats.chart()
-      chartToggle()
     }
   })
 }

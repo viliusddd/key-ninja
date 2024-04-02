@@ -3,9 +3,10 @@ import { apiUrl, timerTime } from "../config.js"
 let CURRENT_API_URL = ''
 
 export default class Display {
-  constructor(appElement) {
+  constructor(appElement, stats) {
     this.appElement = appElement
     this.displayElement = appElement.firstElementChild
+    this.stats = stats
 
     this.create()
   }
@@ -32,8 +33,6 @@ export default class Display {
   }
 
   resetChart() {
-    this.appElement.querySelector('.chart').className = 'chart hidden'
-
     let chartStatus = Chart.getChart("chart")
     if (chartStatus != undefined) {
       chartStatus.destroy()
@@ -124,8 +123,14 @@ export default class Display {
         appElement.classList.remove('runs')
         appElement.classList.add('finished')
       }
+
+      this.stats.refreshStats()
+
       if (!appElement.classList.contains('runs')) {
         clearInterval(timer)
+
+        this.stats.storeResult()
+        this.stats.chart()
       }
 
     }, 1000)
