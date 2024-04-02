@@ -4,7 +4,6 @@ import Key from "./key.js"
 import Stats from "./stats/index.js"
 import { specialKeys } from "./config.js"
 import appStatus from "./appStatus.js"
-import chartStatus from "./stats/chartStatus.js"
 
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))

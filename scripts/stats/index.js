@@ -90,27 +90,15 @@ export default class Stats {
     return Number.parseFloat(num.toFixed(precision));
   }
 
-  /** Refresh WPM and Accuracy statistics every second */
-  refreshStats() {
-    let timeElapsed = 0
+  refresh(timeElapsed) {
+    const typingStats = this.typingStats(timeElapsed)
 
-    let statsRefresh = setInterval(() => {
-      if (!this.appElement.classList.contains('runs')) return
+    const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
+    const accElement = this.appElement
+      .querySelector('.accuracy > div > div:first-child')
 
-      timeElapsed++
-      const typingStats = this.typingStats(timeElapsed)
-
-      const wpmElement = this.appElement.querySelector('.wpm > div:last-child')
-      const accElement = this.appElement
-        .querySelector('.accuracy > div > div:first-child')
-
-      if (typingStats.wpm) wpmElement.innerText = typingStats.wpm
-      if (typingStats.accuracy) accElement.innerText = typingStats.accuracy
-
-      const timerElement = this.appElement.querySelector('.timer')
-
-      if (timerElement.innerText === '0') clearInterval(statsRefresh)
-    }, 1000)
+    if (typingStats.wpm) wpmElement.innerText = typingStats.wpm
+    if (typingStats.accuracy) accElement.innerText = typingStats.accuracy
   }
 
   chart() {

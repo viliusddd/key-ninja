@@ -6,6 +6,7 @@ export default class Display {
   constructor(appElement, stats) {
     this.appElement = appElement
     this.displayElement = appElement.firstElementChild
+    this.timerElement = appElement.querySelector('.timer')
     this.stats = stats
 
     this.create()
@@ -18,7 +19,7 @@ export default class Display {
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
-    this.setTimerElement(timerTime)
+    this.timerElement.innerText = timerTime
     CURRENT_API_URL = url
   }
 
@@ -28,8 +29,6 @@ export default class Display {
 
     this.appElement.classList.remove('runs', 'finished')
 
-    const timerElement = this.appElement.querySelector('.timer')
-    timerElement.innerText = timerTime
   }
 
   resetChart() {
@@ -53,10 +52,6 @@ export default class Display {
   remElements(query) {
     const elements = this.displayElement.querySelectorAll(query)
     elements.forEach(el => el.remove())
-  }
-
-  setTimerElement(time) {
-    this.appElement.querySelector('.timer').innerText = time
   }
 
   /**
@@ -112,28 +107,32 @@ export default class Display {
   }
 
   timer(appElement) {
-    const timerElement = appElement.querySelector('.timer')
-    let count = timerTime
-    count--
+    let timer = timerTime
+    let timeElapsed = 0
 
-    let timer = setInterval(() => {
-      timerElement.innerText = count--
+    let timerInterval = setInterval(() => {
+      timer--
+      timeElapsed++
 
-      if (count < 0) {
-        appElement.classList.remove('runs')
-        appElement.classList.add('finished')
-      }
+      this.timerElement.innerText = timer
 
-      this.stats.refreshStats()
-
-      if (!appElement.classList.contains('runs')) {
-        clearInterval(timer)
+      if (timer == 0) {
+        clearInterval(timerInterval)
 
         this.stats.storeResult()
         this.stats.chart()
+
+        appElement.className = 'app finished'
+
+        return
       }
 
+      this.stats.refresh(timeElapsed)
+
+      if (timer < 0) {
+        appElement.classList.remove('runs')
+        appElement.classList.add('finished')
+      }
     }, 1000)
   }
 }
-
