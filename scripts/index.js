@@ -38,6 +38,8 @@ function touchTyping(appElement) {
     } else if (evt.key === 'Escape') {
       if (appFinished() || appRunning()) display.restart(true), cursor.reset()
       if (!appRunning()) return
+    } else if (evt.key === ' ' && evt.target == document.body) {
+      evt.preventDefault() // prevent space from moving page down
     }
 
     if (!appRunning() && !appFinished()) {
