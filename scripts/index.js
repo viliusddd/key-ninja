@@ -6,8 +6,6 @@ import { specialKeys } from "./config.js"
 import appStatus from "./appStatus.js"
 import chartStatus from "./stats/chartStatus.js"
 
-let APP_RUN = false //! should it really be capitalized?
-
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))
 })
@@ -18,9 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
  * @return {Promise<void>}
  */
 function touchTyping(appElement) {
-  const timer = appElement.querySelector('.timer')
-  const displayElement = appElement.querySelector('.display')
-
   const cursor = new Cursor(appElement)
   const display = new Display(appElement)
 
@@ -39,8 +34,11 @@ function touchTyping(appElement) {
   let corrections = 0
 
   document.addEventListener('keydown', async (evt) => {
-    if (evt.key === 'Enter' || evt.key === 'Escape') {
+    if (evt.key === 'Enter') {
       if (appFinished() || appRunning()) display.restart(), cursor.reset()
+      if (!appRunning()) return
+    } else if (evt.key === 'Escape') {
+      if (appFinished() || appRunning()) display.restart(true), cursor.reset()
       if (!appRunning()) return
     }
 
@@ -68,13 +66,7 @@ function touchTyping(appElement) {
       stats.chart()
       chartToggle()
     }
-
-    // if (appElement.querySelector('.timer').innerText === '0') {
-    //   storeResult
-    // }
-
   })
-  // stats.storeResult()
 }
 
 function type(key, evt) {

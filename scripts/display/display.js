@@ -1,5 +1,7 @@
 import { apiUrl, timerTime } from "../config.js"
 
+let CURRENT_API_URL = ''
+
 export default class Display {
   constructor(appElement) {
     this.appElement = appElement
@@ -8,45 +10,45 @@ export default class Display {
     this.create()
   }
 
-  async create() {
-    const url = this.constructUrl(apiUrl, 154)
+  async create(url = null) {
+    if (!url) url = this.constructUrl(apiUrl, 154)
+
     const apiJson = await this.getApiJson(url)
     const words = this.convertJsonToWords(apiJson)
+
     this.buildWords(words)
     this.setTimerElement(timerTime)
-
+    CURRENT_API_URL = url
   }
 
-  restart() {
-    console.log('restart display')
+  resetDisplay() {
+    // Remove old .word elements
+    this.displayElement.querySelector('.words').replaceChildren()
 
     this.appElement.classList.remove('runs', 'finished')
 
     const timerElement = this.appElement.querySelector('.timer')
     timerElement.innerText = timerTime
-
-    this.remElements('.extra')
-    this.displayElement.querySelectorAll('.letter')
-      .forEach(el => el.className = 'letter')
-    this.displayElement.querySelectorAll('.word')
-      .forEach(elm => elm.className = 'word')
-
-    // chart
-    const chartElement = this.appElement.querySelector('.chart')
-    chartElement.className = 'chart'
-    chartElement.classList.add('hidden')
-
-    let chartStatus = Chart.getChart("chart"); // <canvas> id
-    if (chartStatus != undefined) {
-      chartStatus.destroy();
-    }
-
-    this.create()
   }
 
-  reset() {
-    console.log('reset display')
-    this.restart()
+  resetChart() {
+    this.appElement.querySelector('.chart').className = 'chart hidden'
+
+    let chartStatus = Chart.getChart("chart")
+    if (chartStatus != undefined) {
+      chartStatus.destroy()
+    }
+  }
+
+  restart(reset = null) {
+    this.resetDisplay()
+    this.resetChart()
+
+    if (reset) {
+      this.create()
+    } else {
+      this.create(CURRENT_API_URL)
+    }
   }
 
   remElements(query) {
@@ -124,7 +126,6 @@ export default class Display {
       }
       if (!appElement.classList.contains('runs')) {
         clearInterval(timer)
-        // timerElement.innerText = timerTime
       }
 
     }, 1000)
