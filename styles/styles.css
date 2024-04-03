@@ -89,14 +89,13 @@ nav {
   justify-content: right;
 }
 
-.reset {
+.restart {
   border: none;
   cursor: pointer;
-  /* border: 1px solid red; */
   background: transparent;
   padding: 0;
 }
 
-.reset:hover {
+.restart:hover {
   font-weight: bold;
 }

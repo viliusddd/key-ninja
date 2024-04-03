@@ -179,7 +179,7 @@ export default class Stats {
     }
 
     const config = {
-      type: line,
+      type: 'line',
       data,
       options: {
         responsive: true,
