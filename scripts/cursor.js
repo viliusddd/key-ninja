@@ -3,21 +3,18 @@
  * (HTML div element) horizontally.
  */
 export default class Cursor {
-  #cursorElement
-  #displayElement
-
   /**
    * @param {Element} appElement - root application element.
    */
   constructor(appElement) {
-    this.#cursorElement = appElement.querySelector('.cursor');
-    this.#displayElement = appElement.querySelector('.display')
+    this.cursorElement = appElement.querySelector('.cursor');
+    this.displayElement = appElement.querySelector('.display')
     this.reset()
   }
 
   /** Move cursor to the begining of line. */
   reset() {
-    this.move(this.#displayElement, 8)
+    this.move(this.displayElement, 8)
   }
 
   /**
@@ -27,7 +24,7 @@ export default class Cursor {
    */
   move(element, width = null) {
     const pixels = this.newCoord(element, width)
-    this.#cursorElement.style.left = `${pixels}px`
+    this.cursorElement.style.left = `${pixels}px`
   }
 
   /**
