@@ -18,15 +18,14 @@ function touchTyping(appElement) {
   const stats = new Stats(appElement)
   const display = new Display(appElement, stats)
 
-  // Restart Button
-  const resetElement = appElement.querySelector('.restart')
-  resetElement.addEventListener('click', () => {
+  const restartElement = appElement.querySelector('.restart')
+  restartElement.addEventListener('click', () => {
     display.restart(true)
     cursor.reset()
-    resetElement.blur() // remove focus after Shift key press
+    restartElement.blur() // remove focus after Shift key press
   })
 
-  const {startApp, stopApp, appRunning, appFinished} = appStatus(appElement)
+  const {startApp, appRunning, appFinished} = appStatus(appElement)
 
   let corrections = 0
 

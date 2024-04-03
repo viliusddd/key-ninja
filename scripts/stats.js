@@ -1,3 +1,4 @@
+import {dateTimeNow, toFixedWithoutZeros, retrieveLocalItem} from './utils.js'
 /**
  * Deals with the display of statistics.
  */
@@ -23,7 +24,7 @@ export default class Stats {
   storeResult() {
     const match = JSON.parse(sessionStorage.getItem('stats'))
 
-    let matches = this.retrieveItem('matches')
+    let matches = retrieveLocalItem('matches')
     if (matches) matches = matches.slice(-19)
 
     if (!matches) {
@@ -33,29 +34,6 @@ export default class Stats {
     matches.push(match)
 
     window.localStorage.setItem('matches', JSON.stringify(matches))
-  }
-
-  /**
-   * Retrieve key value from localStorage.
-   * @param {string} key - localStorage key name.
-   * @return {object[]} - array containing separate object for each
-   * completed touch-typing exercise.
-   */
-  retrieveItem(key) {
-    if (localStorage.getItem(key)) {
-      return JSON.parse(localStorage.getItem(key))
-    }
-  }
-
-  /**
-   * Return current date and time in short form.
-   * @return {string} - example: "2024-04-03 13:03"
-   */
-  dateTimeNow() {
-    return Intl.DateTimeFormat('lt', { // eslint-disable-line new-cap
-      dateStyle: 'short',
-      timeStyle: 'short',
-    }).format(new Date())
   }
 
   /**
@@ -102,11 +80,11 @@ export default class Stats {
 
     let accuracy = 0
     if (keystrokes > 0) {
-      accuracy = this.toFixedWithoutZeros(keysCorrect / keystrokes * 100)
+      accuracy = toFixedWithoutZeros(keysCorrect / keystrokes * 100)
     }
 
     const stats = {
-      date: this.dateTimeNow(),
+      date: dateTimeNow(),
       wpm: Math.round(keystrokes / 5 / timeElapsed * 60),
       accuracy,
       keystrokes,
@@ -117,16 +95,6 @@ export default class Stats {
 
     sessionStorage.setItem('stats', JSON.stringify(stats))
     return stats
-  }
-
-  /**
-   * Round number to precise decimal places. Do not add zeroes.
-   * @param {number} num
-   * @param {number} precision - how many numbers after comma.
-   * @return {number}
-   */
-  toFixedWithoutZeros(num, precision = 1) {
-    return Number.parseFloat(num.toFixed(precision));
   }
 
   /**
@@ -143,7 +111,7 @@ export default class Stats {
 
   /** Create new Chart. */
   chart() {
-    const matches = this.retrieveItem('matches')
+    const matches = retrieveLocalItem('matches')
 
     const borderColor = getComputedStyle(document.body)
         .getPropertyValue('--txt-stats')

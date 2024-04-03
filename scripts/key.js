@@ -1,3 +1,5 @@
+import {getBBox} from './utils.js'
+
 /**
  * Checks if user input matches letters and goes back and forth the words.
  */
@@ -154,7 +156,7 @@ export default class Key {
    */
   appendLetter() {
     const cursorX = this.cursor.newCoord(this.activeWord.lastChild, 32)
-    const displayBBox = this.cursor.getBBox(
+    const displayBBox = getBBox(
         this.appElement.querySelector('.display'),
     )
 

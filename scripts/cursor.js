@@ -1,3 +1,4 @@
+import {getBBox} from './utils.js'
 /**
  * Moves text insertion indication cursor
  * (HTML div element) horizontally.
@@ -34,20 +35,8 @@ export default class Cursor {
    * @return {number} - number for new cursor x coordinate.
    */
   newCoord(element, width = null) {
-    const bbox = this.getBBox(element)
+    const bbox = getBBox(element)
     if (width === null) width = bbox.width;
     return bbox.x + width - 1
-  }
-
-  /**
-   * Get element's DOMRect object in a convenient form.
-   * @param {Element} element - html element.
-   * @return {Object} - object element bounding box numbers retrieved
-   * from its DOMRect.
-   */
-  getBBox(element) {
-    const {top, right, bottom, left, width, height, x, y} = element
-        .getBoundingClientRect()
-    return {top, right, bottom, left, width, height, x, y}
   }
 }

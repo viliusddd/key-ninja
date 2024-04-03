@@ -1,4 +1,5 @@
 import {apiUrl, timerTime} from './config.js'
+import {getApiJson} from './utils.js'
 
 let CURRENT_API_URL = '';
 
@@ -28,7 +29,7 @@ export default class Display {
   async create(url = null) {
     if (!url) url = this.constructUrl(apiUrl, 154)
 
-    const apiJson = await this.getApiJson(url)
+    const apiJson = await getApiJson(url)
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
@@ -109,19 +110,6 @@ export default class Display {
         .trim()
         .split(' ')
         .filter(word => word)
-  }
-
-  /**
-   * @param {string} url - url of api containing words for typing.
-   * @return {Promise<object[]>}
-   */
-  async getApiJson(url) {
-    try {
-      const response = await fetch(url)
-      return await response.json()
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   /**
