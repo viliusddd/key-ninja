@@ -155,15 +155,14 @@ export default class Display {
       timer--
       timeElapsed++
 
-      this.updateTimerElement(timer)
-      this.stats.refresh(timeElapsed)
-
       if (this.appElement.classList.contains('cancel')) {
-        clearInterval(timerInterval)
         this.appElement.classList.remove('runs', 'cancel')
-      } else if (this.appElement.classList.contains('restart')) {
         clearInterval(timerInterval)
+        return
+      } else if (this.appElement.classList.contains('restart')) {
         this.appElement.classList.remove('runs', 'restart')
+        clearInterval(timerInterval)
+        return
       } else if (timer === 0) {
         this.stats.storeResult()
         this.stats.chart()
@@ -172,6 +171,8 @@ export default class Display {
         this.appElement.classList.remove('runs')
         appElement.classList.add('finished')
       }
+      this.updateTimerElement(timer)
+      this.stats.refresh(timeElapsed)
     }, 1000)
   }
 }
