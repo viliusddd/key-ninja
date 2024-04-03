@@ -109,12 +109,16 @@ export default class Stats {
   chart() {
     const matches = this.retrieveItem('matches')
 
+    const borderColor = getComputedStyle(document.body)
+      .getPropertyValue('--txt-stats')
+
     const data = {
       labels: matches.map(res => res.date),
       datasets: [{
         data: matches.map(res => res.wpm),
         fill: true,
-        borderColor: "rgba(0,0,255,0.1)"
+        borderColor,
+        borderWidth: 1,
       }]
     }
 
