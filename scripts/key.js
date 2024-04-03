@@ -4,41 +4,48 @@
 export default class Key {
   /**
    * @param {KeyboardEvent} event - coming from 'keydown' eventListener.
-   * @param {Cursor} cursor - Cursor object responsible of moving text
+   * @param {Cursor} cursor - Cursor object responsible of moving text.
+   * @param {Element} appElement - root application element.
    * insertion indication cursor horizontally.
    */
   constructor(event, cursor, appElement) {
     this._event = event;
     this._cursor = cursor;
     this._appElement = appElement
+    this.activeWord = this.appElement.querySelector('.active')
 
-    this.initKey()
+    this.refreshLetter()
   }
 
+  /** KeyboardEvent */
   get event() {
     return this._event
   }
 
+  /** Cursor obj instance. */
   get cursor() {
     return this._cursor
   }
 
+  /** Root application element. */
   get appElement() {
     return this._appElement
   }
 
-  reset() {
-    this.initKey()
-    this.cursor.reset()
-    // this.cursor.
+  /** Refresh letterNode and letter values */
+  refreshLetter() {
+    this.letterNode = this.findNextLetter()
+    this.letter = this.letterNode ? this.letterNode.innerText : undefined
   }
 
-  initKey() {
-    /** @type {Element} */
-    this.activeWord = this.appElement.querySelector('.active')
-    this.letterNodes = [...this.activeWord.children]
-    this.letterNode = this.letterNodes.find(word => word.classList.length === 1)
-    this.letter = this.letterNode ? this.letterNode.innerText : undefined
+  /**
+   * Find the letter that wasn't processed yet i.e. contains
+   * single .word class.
+   * @return {Element} - letter element.
+   */
+  findNextLetter() {
+    return [...this.activeWord.children]
+        .find(word => word.classList.length === 1)
   }
 
   /**
@@ -95,10 +102,10 @@ export default class Key {
     this.activeWord.classList.remove('active')
     const prevCursorX = this.cursor.newCoord(this.activeWord.lastChild, 0)
 
-    this.activeWord = this.activeWord.nextSibling //! at the end of tex is undefined?
+    this.activeWord = this.activeWord.nextSibling
     this.activeWord.classList.add('active')
 
-    this.initKey()
+    this.refreshLetter()
 
     const currentCursorX = this.cursor.newCoord(this.letterNode, 0)
 
@@ -110,20 +117,34 @@ export default class Key {
     }
   }
 
+  /**
+   * Return all element siblings before it.
+   * @param {Element} element - html element.
+   * @return {Element[]}
+   */
   getPreviousSiblings(element) {
     const siblings = []
     while (element = element.previousSibling) siblings.push(element)
     return siblings
   }
 
+  /**
+   * Return true if letter element is the firstChild of active word.
+   * @return {boolean}
+   */
   isFirstWordLetter() {
-    return this.letterNode
-      ? this.letterNode.isSameNode(this.activeWord.firstChild)
-      : false
+    return this.letterNode ?
+        this.letterNode.isSameNode(this.activeWord.firstChild) :
+        false
   }
 
+  /**
+   * Return true if .word element contains .correct.
+   * @return {boolean}
+   */
   wordIsCorrect() {
-    return this.letterNodes.every(node => node.classList.contains('correct'))
+    return [...this.activeWord.children]
+        .every(node => node.classList.contains('correct'))
   }
 
   /**
@@ -132,9 +153,9 @@ export default class Key {
    * - it can't go beyond the edge of .display
    */
   appendLetter() {
-    let cursorX = this.cursor.newCoord(this.activeWord.lastChild, 32)
+    const cursorX = this.cursor.newCoord(this.activeWord.lastChild, 32)
     const displayBBox = this.cursor.getBBox(
-      this.appElement.querySelector('.display')
+        this.appElement.querySelector('.display'),
     )
 
     if (cursorX > (displayBBox.x + displayBBox.width)) return

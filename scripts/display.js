@@ -1,4 +1,4 @@
-import {apiUrl, timerTime} from '../config.js'
+import {apiUrl, timerTime} from './config.js'
 
 let CURRENT_API_URL = '';
 

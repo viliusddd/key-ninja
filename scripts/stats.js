@@ -1,18 +1,25 @@
+/**
+ * Deals with the display of statistics.
+ */
 export default class Stats {
+  /**
+   * @param {Element} appElement - root element of application.
+   */
   constructor(appElement) {
     this.appElement = appElement
     this.statsElement = appElement.querySelector('.stats')
     this.wordsElement = appElement.querySelector('.words')
     this.accElement = appElement.querySelector('.accuracy > div > div')
     this.wpmElement = appElement.querySelector('.wpm > div:last-child')
-
   }
 
-  storeSession(item) {
-    const { itemKey, itemVal } = item
-    sessionStorage.setItem({ itemKey, itemVal })
-  }
-
+  /**
+   * Accumulate statistics of each run of touch-typing exercise.
+   * Each touch-type exercise stats are acuumulated every second of the
+   * exercise to sessionStorage.
+   * Here it appends final stats of exercise to localStorage for
+   * convenient way of retrieving history of exercises for chart.
+   */
   storeResult() {
     const match = JSON.parse(sessionStorage.getItem('stats'))
 
@@ -28,23 +35,41 @@ export default class Stats {
     window.localStorage.setItem('matches', JSON.stringify(matches))
   }
 
-  retrieveItem(itemName) {
-    if (localStorage.getItem(itemName)) {
-      return JSON.parse(localStorage.getItem(itemName))
+  /**
+   * Retrieve key value from localStorage.
+   * @param {string} key - localStorage key name.
+   * @return {object[]} - array containing separate object for each
+   * completed touch-typing exercise.
+   */
+  retrieveItem(key) {
+    if (localStorage.getItem(key)) {
+      return JSON.parse(localStorage.getItem(key))
     }
   }
 
+  /**
+   * Return current date and time in short form.
+   * @return {string} - example: "2024-04-03 13:03"
+   */
   dateTimeNow() {
-    return Intl.DateTimeFormat("lt", {
+    return Intl.DateTimeFormat('lt', { // eslint-disable-line new-cap
       dateStyle: 'short',
       timeStyle: 'short',
     }).format(new Date())
   }
 
   /**
-   * Get total typed words, words with errors,
-   * total letters and letters with errors.
-   * @return {object}
+   * Get multiple statistics exercise.
+   * @param {number} timeElapsed - elapsed time since exercise start.
+   * @return {object} - example: {
+   *   "date": "2024-04-03 13:02",
+   *   "wpm": 72,
+   *   "accuracy": 100,
+   *   "keystrokes":30,
+   *   "correctWords": 6,
+   *   "wrongWords": 0,
+   *   "corrections": 0
+   * }
    */
   typingStats(timeElapsed = null) {
     // get all words before active word
@@ -59,8 +84,8 @@ export default class Stats {
     let keystrokes = 0
     let keysCorrect = 0
 
+    /** count " " after words */
     for (const word of siblings) {
-      //count " " after words
       if (!word.classList.contains('error')) keystrokes++, keysCorrect++
 
       for (const letter of word.childNodes) {
@@ -72,8 +97,8 @@ export default class Stats {
     const wrdTotal = siblings.length
 
     const correctWords = siblings
-      .filter(sib => !sib.classList.contains('error'))
-      .reduce((accum, _) => accum += 1, 0)
+        .filter(sib => !sib.classList.contains('error'))
+        .reduce((accum, _) => accum += 1, 0)
 
     let accuracy = 0
     if (keystrokes > 0) {
@@ -94,10 +119,20 @@ export default class Stats {
     return stats
   }
 
+  /**
+   * Round number to precise decimal places. Do not add zeroes.
+   * @param {number} num
+   * @param {number} precision - how many numbers after comma.
+   * @return {number}
+   */
   toFixedWithoutZeros(num, precision = 1) {
     return Number.parseFloat(num.toFixed(precision));
   }
 
+  /**
+   * Update WPM and Accuracy elements.
+   * @param {number} timeElapsed - elapsed time since start of exercise.
+   */
   refresh(timeElapsed) {
     const typingStats = this.typingStats(timeElapsed)
     if (typingStats) {
@@ -106,11 +141,12 @@ export default class Stats {
     }
   }
 
+  /** Create new Chart. */
   chart() {
     const matches = this.retrieveItem('matches')
 
     const borderColor = getComputedStyle(document.body)
-      .getPropertyValue('--txt-stats')
+        .getPropertyValue('--txt-stats')
 
     const data = {
       labels: matches.map(res => res.date),
@@ -119,7 +155,7 @@ export default class Stats {
         fill: true,
         borderColor,
         borderWidth: 1,
-      }]
+      }],
     }
 
     const callbacks = {
@@ -143,26 +179,26 @@ export default class Stats {
     }
 
     const config = {
-      type: "line",
+      type: line,
       data,
       options: {
         responsive: true,
-        legend: { display: false },
+        legend: {display: false},
         scales: {
-          y: { ticks: { min: 0, max: 100 } },
-          x: { ticks: { display: false } }
+          y: {ticks: {min: 0, max: 100}},
+          x: {ticks: {display: false}},
         },
         plugins: {
-          legend: { display: false },
+          legend: {display: false},
           tooltip: {
             displayColors: false,
             enabled: true,
             callbacks,
           },
         },
-      }
+      },
     }
 
-    new Chart("chart", config);
+    new Chart('chart', config)
   }
 }

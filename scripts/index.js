@@ -1,9 +1,9 @@
-import Cursor from "./cursor.js"
-import Display from "./display/display.js"
-import Key from "./key.js"
-import Stats from "./stats/index.js"
-import { specialKeys } from "./config.js"
-import appStatus from "./appStatus.js"
+import appStatus from './appStatus.js'
+import Cursor from './cursor.js'
+import Display from './display.js'
+import Key from './key.js'
+import Stats from './stats.js'
+import {specialKeys} from './config.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))
@@ -12,14 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Initialize touch-typing application
  * @param {Element} appElement - root element of application
- * @return {Promise<void>}
  */
 function touchTyping(appElement) {
   const cursor = new Cursor(appElement)
   const stats = new Stats(appElement)
   const display = new Display(appElement, stats)
 
-  // Restart BTN
+  // Restart Button
   const resetElement = appElement.querySelector('.reset')
   resetElement.addEventListener('click', () => {
     display.restart()
@@ -27,7 +26,7 @@ function touchTyping(appElement) {
     resetElement.blur() // remove focus after Shift key press
   })
 
-  const { startApp, stopApp, appRunning, appFinished } = appStatus(appElement)
+  const {startApp, stopApp, appRunning, appFinished} = appStatus(appElement)
 
   let corrections = 0
 
@@ -61,6 +60,12 @@ function touchTyping(appElement) {
   })
 }
 
+/**
+ * Compare key press with current letter on display.
+ * @param {Key} key - Key class object. Deals with key presses.
+ * @param {KeyboardEvent} evt - event describes a single interaction
+ * between the user and a key on the keyboard.
+ */
 function type(key, evt) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
