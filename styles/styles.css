@@ -1,6 +1,5 @@
 @import url(layout.css);
 @import url(reset.css);
-@import url(stats.css);
 
 :root {
   --bg-color: #CFD8D7;
@@ -98,4 +97,32 @@ nav {
 
 .restart:hover {
   font-weight: bold;
+}
+
+.correct {
+  color: var(--txt-correct);
+}
+
+.incorrect {
+  color: var(--txt-incorrect);
+}
+
+.error {
+  text-decoration: line-through;
+}
+
+.stats {
+  display: flex;
+  justify-content: left;
+  margin-right: auto;
+  gap: 2ch;
+}
+
+.chart {
+  max-height: 100%;
+  margin: 1ch 0;
+}
+
+#chart {
+  display: none;
 }
