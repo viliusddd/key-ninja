@@ -62,21 +62,15 @@ export default class Stats {
     let keystrokes = 0
     let keysCorrect = 0
 
-    /** count " " after words */
-    for (const word of siblings) {
-      if (!word.classList.contains('error')) keystrokes++, keysCorrect++
-
-      for (const letter of word.childNodes) {
-        keystrokes++
-        if (letter.classList.contains('correct')) keysCorrect++
+    siblings.forEach(word => {
+      keystrokes += word.childElementCount
+      if (!word.classList.contains('error')) {
+        keysCorrect += word.childElementCount + 1
+        keystrokes += 1
       }
-    }
+    })
 
-    const wrdTotal = siblings.length
-
-    const correctWords = siblings
-        .filter(sib => !sib.classList.contains('error'))
-        .reduce((accum, _) => accum += 1, 0)
+    const corrWords = siblings.filter(sib => !sib.classList.contains('error'))
 
     let accuracy = 0
     if (keystrokes > 0) {
@@ -85,11 +79,11 @@ export default class Stats {
 
     const stats = {
       date: dateTimeNow(),
-      wpm: Math.round(keystrokes / 5 / timeElapsed * 60),
+      wpm: Math.round(keysCorrect / 5 / timeElapsed * 60),
       accuracy,
       keystrokes,
-      correctWords,
-      wrongWords: wrdTotal - correctWords,
+      correctWords: corrWords.length,
+      wrongWords: siblings.length - corrWords.length,
       corrections: parseInt(sessionStorage.getItem('corrections')),
     }
 
