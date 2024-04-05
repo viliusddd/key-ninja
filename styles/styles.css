@@ -1,5 +1,6 @@
 @import url(layout.css);
 @import url(reset.css);
+@import url(panel.css);
 
 :root {
   --bg-color: #CFD8D7;
@@ -9,6 +10,7 @@
   --txt-incorrect: #C0091E;
   --txt-stats: #453831;
   --cursor-color: #ffbb00;
+  --msg-color: #45383170;
 }
 
 body {
@@ -65,40 +67,6 @@ body {
   display: none;
 }
 
-nav {
-  align-items: center;
-  margin-top: 1ch;
-  display: flex;
-  justify-content: right;
-  padding: 0 1ch;
-  color: var(--txt-stats);
-}
-
-.timer {
-  display: flex;
-  width: 4ch;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.wpm > div:last-child,
-.accuracy > div {
-  display: flex;
-  justify-content: right;
-}
-
-.restart {
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  padding: 0;
-}
-
-.restart:hover {
-  font-weight: bold;
-}
-
 .correct {
   color: var(--txt-correct);
 }
@@ -109,13 +77,6 @@ nav {
 
 .error {
   text-decoration: line-through;
-}
-
-.stats {
-  display: flex;
-  justify-content: left;
-  margin-right: auto;
-  gap: 2ch;
 }
 
 .chart {

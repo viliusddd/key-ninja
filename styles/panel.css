@@ -1,0 +1,80 @@
+.panel {
+  margin-top: 1ch;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1ch;
+  color: var(--txt-stats);
+  column-gap: 1ch;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+
+.wpm > div:last-child,
+.accuracy > div {
+  display: flex;
+  justify-content: right;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+}
+.message > div {
+  color: var(--msg-color);
+  font-size: 13px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.timer-restart {
+  display: flex;
+  gap: 1ch;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3ch;
+}
+
+.restart > button {
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+}
+
+.restart {
+  display: flex;
+  align-items: center;
+}
+
+.restart:hover {
+  font-weight: bold;
+}
+
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.network-error {
+  color: var(--txt-incorrect)
+}
+
+.pulse {
+  animation: pulse 5s infinite;
+}
