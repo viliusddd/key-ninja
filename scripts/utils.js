@@ -45,12 +45,11 @@ export function getBBox(element) {
 
 /**
  * @param {string} url - url of api containing words for typing.
- * @param {Element} element - html element
+ * @param {Element} element - html element of .message div.
  * @return {Promise<object[]> | object}
  */
 export async function getApiJson(url, element) {
   let response
-  url = 'https://httpbin.org/status/401'
 
   try {
     response = await fetch(url)
@@ -73,6 +72,26 @@ export async function getApiJson(url, element) {
       element.innerText = `Fails with ${err.name}.`
     }
 
+    element.classList.add('network-error')
+
     return
+  }
+}
+
+/**
+ * Change innerText of .message element.
+ * @param {Element} element - html element.
+ * @return {object}
+ */
+export function appMsg(element) {
+  return {
+    start: () => {
+      element.innerText = 'Press any key to start'
+      element.classList.add('pulse')
+    },
+    restart: () => {
+      element.innerText = 'Press Esc or Enter to restart'
+      element.classList.remove('pulse')
+    },
   }
 }

@@ -4,6 +4,7 @@ import Display from './display.js'
 import Key from './key.js'
 import Stats from './stats.js'
 import {specialKeys} from './config.js'
+import {appMsg} from './utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   touchTyping(document.querySelector('.app'))
@@ -45,6 +46,9 @@ function touchTyping(appElement) {
 
       display.timer(appElement)
       sessionStorage.setItem('corrections', 0)
+
+      const msgElement = appElement.querySelector('.message')
+      appMsg(msgElement).restart()
     }
 
     if (appRunning()) {

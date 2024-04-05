@@ -22,12 +22,11 @@
 .message {
   display: flex;
   align-items: center;
-}
-.message > div {
+  justify-content: center;
   color: var(--msg-color);
   font-size: 13px;
-  flex-grow: 1;
   text-align: center;
+  flex-grow: 1;
 }
 
 .timer-restart {

@@ -1,5 +1,5 @@
 import {apiUrl, timerTime} from './config.js'
-import {getApiJson} from './utils.js'
+import {appMsg, getApiJson} from './utils.js'
 
 let CURRENT_API_URL = '';
 
@@ -16,6 +16,7 @@ export default class Display {
     this.appElement = appElement
     this.displayElement = appElement.firstElementChild
     this.timerElement = appElement.querySelector('.timer')
+    this.msgElement = appElement.querySelector('.message')
     this.stats = stats
 
     this.create()
@@ -29,14 +30,16 @@ export default class Display {
   async create(url = null) {
     if (!url) url = this.constructUrl(apiUrl, 154)
 
-    const msgElement = this.appElement.querySelector('.message')
-    const apiJson = await getApiJson(url, msgElement)
+    const apiJson = await getApiJson(url, this.msgElement)
     if (!apiJson) return
 
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
     this.updateTimerElement(timerTime)
+
+    appMsg(this.msgElement).start()
+
     CURRENT_API_URL = url
   }
 
@@ -107,7 +110,6 @@ export default class Display {
    * @return {string[]} - array of words
    */
   convertJsonToWords(apiJson) {
-    console.log(apiJson)
     const lines = apiJson[0].lines
     return lines
         .reduce((accum, line) => `${accum} ${line}`, '')

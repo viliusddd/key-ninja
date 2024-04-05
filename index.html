@@ -18,7 +18,7 @@
             <div class="cursor"></div>
             <div class="words"></div>
         </div>
-        <nav>
+        <div class="panel">
             <div class="stats">
                 <div class="wpm">
                     <div><b>WPM</b></div>
@@ -31,11 +31,15 @@
                         <div>%</div>
                     </div>
                 </div>
-                <div class="message"></div>
             </div>
-            <div class="timer"></div>
-            <button class="restart">Restart</button>
-        </nav>
+            <div class="message"></div>
+            <div class="timer-restart">
+                <div class="timer"></div>
+                <div class="restart">
+                    <button>Restart</button>
+                </div>
+            </div>
+        </div>
         <div class="chart">
             <canvas id="chart"></canvas>
         </div>
