@@ -45,13 +45,34 @@ export function getBBox(element) {
 
 /**
  * @param {string} url - url of api containing words for typing.
- * @return {Promise<object[]>}
+ * @param {Element} element - html element
+ * @return {Promise<object[]> | object}
  */
-export async function getApiJson(url) {
+export async function getApiJson(url, element) {
+  let response
+  url = 'https://httpbin.org/status/401'
+
   try {
-    const response = await fetch(url)
-    return await response.json()
-  } catch (error) {
-    console.log(error)
+    response = await fetch(url)
+
+    if (!response.ok) {
+      throw response
+    }
+
+    const respJson = await response.json()
+
+    if (respJson.status == 404) {
+      throw respJson
+    } else {
+      return respJson
+    }
+  } catch (err) {
+    if (err.status) {
+      element.innerText = `${err.status}: connection failed.`
+    } else if (err.name) {
+      element.innerText = `Fails with ${err.name}.`
+    }
+
+    return
   }
 }

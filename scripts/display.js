@@ -29,7 +29,10 @@ export default class Display {
   async create(url = null) {
     if (!url) url = this.constructUrl(apiUrl, 154)
 
-    const apiJson = await getApiJson(url)
+    const msgElement = this.appElement.querySelector('.message')
+    const apiJson = await getApiJson(url, msgElement)
+    if (!apiJson) return
+
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
@@ -104,6 +107,7 @@ export default class Display {
    * @return {string[]} - array of words
    */
   convertJsonToWords(apiJson) {
+    console.log(apiJson)
     const lines = apiJson[0].lines
     return lines
         .reduce((accum, line) => `${accum} ${line}`, '')
