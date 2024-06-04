@@ -1,4 +1,4 @@
-import {getBBox} from './utils.js'
+import { getBBox } from './utils.js'
 /**
  * Moves text insertion indication cursor
  * (HTML div element) horizontally.
