@@ -13,7 +13,7 @@ export function toFixedWithoutZeros(num, precision = 1) {
  * @return {string} - example: "2024-04-03 13:03"
  */
 export function dateTimeNow() {
-  return Intl.DateTimeFormat('lt', { // eslint-disable-line new-cap
+  return Intl.DateTimeFormat('lt', {
     dateStyle: 'short',
     timeStyle: 'short',
   }).format(new Date())

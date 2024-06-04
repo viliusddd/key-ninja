@@ -1,4 +1,5 @@
 import {dateTimeNow, toFixedWithoutZeros, retrieveLocalItem} from './utils.js'
+
 /**
  * Deals with the display of statistics.
  */
@@ -55,7 +56,7 @@ export default class Stats {
     let activeElement = this.wordsElement.querySelector('.active')
     if (!activeElement) return
 
-    while (activeElement = activeElement.previousSibling) {
+    while ((activeElement = activeElement.previousSibling)) {
       siblings.push(activeElement)
     }
 
@@ -161,6 +162,6 @@ export default class Stats {
       },
     }
 
-    new Chart('chart', config)
+    new Chart('chart', config) // eslint-disable-line
   }
 }

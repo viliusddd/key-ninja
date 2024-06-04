@@ -65,7 +65,7 @@ export default class Display {
 
   /** Remove chart if it already exists */
   resetChart() {
-    const chartStatus = Chart.getChart('chart')
+    const chartStatus = Chart.getChart('chart') // eslint-disable-line
     if (chartStatus != undefined) {
       chartStatus.destroy()
     }

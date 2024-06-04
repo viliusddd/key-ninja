@@ -126,7 +126,7 @@ export default class Key {
    */
   getPreviousSiblings(element) {
     const siblings = []
-    while (element = element.previousSibling) siblings.push(element)
+    while ((element = element.previousSibling)) siblings.push(element)
     return siblings
   }
 
