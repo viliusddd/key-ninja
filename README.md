@@ -1,4 +1,4 @@
-# Touch Typing application
+# KeyNinja App
 1-minute touch-typing exercise.
 
 - Press any key to start typing.
