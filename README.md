@@ -1,19 +1,33 @@
+[![build ](https://github.com/viliusddd/key-ninja/actions/workflows/deploy.yaml/badge.svg)](https://github.com/viliusddd/key-ninja/actions/workflows/deploy.yaml)
+
 # KeyNinja App
-1-minute touch-typing exercise.
 
-- Press any key to start typing.
-- Press `Enter`, `Esc` or `Restart` button to restart the application.
-- Time can be changed in config.js file.
-- WPM and Accuracy stats are shown "real-time", i.e. are refreshed every second.
-- At the end of session chart shows up where it shows last 20 sessions results:
-  - date and time test was taken
-  - WPM - words per minute
-  - Accuracy - percentage of correct words
-  - Correct words
-  - Wrong words
-  - Corrections - how many times backspace was used
+<img align=right src="images/screenrecording.gif" width="40%"/>
 
-<img src="images/screenrecording.gif" width="50%"/>
+- [KeyNinja App](#keyninja-app)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Setup](#setup)
+
+## Features
+- Countdown starts with the press of any key;
+- Press `Enter` to restart with the same text or `Esc`/"Restart" button to restart with the change of the text;
+- **WPM** and **Accuracy** stats are shown "real-time", i.e. are updated every second;
+- At the end of each session chart shows up where it shows the game-play history of up to 20 sessions back. More details can be seen hovering mouse on each session indicator circle:
+  * date and time test was taken;
+  * WPM - words per minute;
+  * accuracy - percentage of correct words;
+  * correct words count;
+  * wrong words count;
+  * corrections - how many times backspace was used.
+- It allows to go back only at the limits of the same word;
+- Countdown time can be changed in `src/config.js` file.
+- Incorrect letters at the end of the word will be appended:
+  * only up to `5` letters (it can be adjusted at `src/config.js`) or the edge of input window border;
+
+## Tech Stack
+- Vanilla Javascript
+- localStorage & sessionStorage
 
 ## Setup
 Use vscode live server to run the application.
