@@ -26,9 +26,7 @@ export function dateTimeNow() {
  * completed touch-typing exercise.
  */
 export function retrieveLocalItem(key) {
-  if (localStorage.getItem(key)) {
-    return JSON.parse(localStorage.getItem(key))
-  }
+  if (localStorage.getItem(key)) return JSON.parse(localStorage.getItem(key))
 }
 
 /**
@@ -54,23 +52,16 @@ export async function getApiJson(url, element) {
   try {
     response = await fetch(url)
 
-    if (!response.ok) {
-      throw response
-    }
+    if (!response.ok) throw response
 
     const respJson = await response.json()
 
-    if (respJson.status == 404) {
-      throw respJson
-    } else {
-      return respJson
-    }
+    if (respJson.status == 404) throw respJson
+    else return respJson
+
   } catch (err) {
-    if (err.status) {
-      element.innerText = `${err.status}: connection failed.`
-    } else if (err.name) {
-      element.innerText = `Fails with ${err.name}.`
-    }
+    if (err.status) element.innerText = `${err.status}: connection failed.`
+    else if (err.name) element.innerText = `Fails with ${err.name}.`
 
     element.classList.add('network-error')
 

@@ -79,13 +79,13 @@ export default class Key {
    *   - if the letter is incorrect - append it to word end.
    *     Oherwise ignore it.
    * - correct letter.
-   * @param {boolean} correct - true when match event.key.
+   * @param {boolean} isCorrect - true when match event.key.
    */
-  next(correct) {
-    const name = (correct === true) ? 'correct' : 'incorrect'
+  next(isCorrect) {
+    const name = (isCorrect === true) ? 'correct' : 'incorrect'
 
     if (!this.letterNode) {
-      if (!correct) this.appendLetter();
+      if (!isCorrect) this.appendLetter();
     } else {
       this.letterNode.classList.add(name)
       this.cursor.move(this.letterNode)

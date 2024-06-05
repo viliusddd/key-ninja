@@ -26,11 +26,9 @@ export default class Stats {
     const match = JSON.parse(sessionStorage.getItem('stats'))
 
     let matches = retrieveLocalItem('matches')
-    if (matches) matches = matches.slice(-19)
 
-    if (!matches) {
-      matches = [match]
-    }
+    if (matches) matches = matches.slice(-19)
+    else matches = [match]
 
     matches.push(match)
 
@@ -74,9 +72,8 @@ export default class Stats {
     const corrWords = siblings.filter(sib => !sib.classList.contains('error'))
 
     let accuracy = 0
-    if (keystrokes > 0) {
+    if (keystrokes > 0)
       accuracy = toFixedWithoutZeros(keysCorrect / keystrokes * 100)
-    }
 
     const stats = {
       date: dateTimeNow(),

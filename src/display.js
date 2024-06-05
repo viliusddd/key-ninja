@@ -66,31 +66,25 @@ export default class Display {
   /** Remove chart if it already exists */
   resetChart() {
     const chartStatus = Chart.getChart('chart') // eslint-disable-line
-    if (chartStatus != undefined) {
-      chartStatus.destroy()
-    }
+    if (chartStatus != undefined) chartStatus.destroy()
   }
 
   /**
    * Restart or reset the app.
    * If restart is triggered while timer isn't finished - mark as cancel.
-   * @param {boolean} reset - if the value is positive - change
+   * @param {boolean} isFullReset - if the value is positive - change
    * the api url, otherwise leave  the current one.
    */
-  restart(reset = false) {
-    if (this.timerElement.innerText !== '0s') {
+  restart(isFullReset = false) {
+    if (this.timerElement.innerText !== '0s')
       this.appElement.classList.add('cancel')
-    }
 
     this.resetDisplay()
     this.resetChart()
     this.resetStatsElements()
 
-    if (reset) {
-      this.create()
-    } else {
-      this.create(CURRENT_API_URL)
-    }
+    if (isFullReset) this.create()
+    else this.create(CURRENT_API_URL)
   }
 
   /**
