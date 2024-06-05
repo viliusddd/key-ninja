@@ -4,3 +4,4 @@ export const specialKeys = [
   'ArrowRight', '§', 'Tab',
 ]
 export const timerTime = 60 // in seconds
+export const extraLimit = 5 // the limit of incorrect letters at the end of word
