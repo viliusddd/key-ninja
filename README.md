@@ -4,6 +4,8 @@
 
 <img align=right src="images/screenrecording.gif" width="40%"/>
 
+Discover the dark art of typing without looking, transforming your clumsy keystrokes into a symphony of speed and accuracy. Become the keyboard wizard your fingers always dreamed of being, and let your newfound powers impress colleagues and mystify friends!
+
 - [KeyNinja App](#keyninja-app)
   - [Features](#features)
   - [Tech Stack](#tech-stack)
