@@ -16,12 +16,12 @@
 
 @font-face {
   font-family: 'Ubuntu Mono';
-  src: url('/src/assets/UbuntuMono-Regular.ttf');
+  src: url('../fonts/UbuntuMono-Regular.ttf');
 }
 
 @font-face {
   font-family: 'Ubuntu Mono';
-  src: url('/src/assets/UbuntuMono-Bold.ttf');
+  src: url('../fonts/UbuntuMono-Bold.ttf');
   font-weight: bold;
 }
 
