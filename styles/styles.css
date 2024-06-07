@@ -2,6 +2,7 @@
 @import url(reset.css);
 @import url(panel.css);
 
+
 :root {
   --bg-color: #CFD8D7;
   --txtbox-color: #fbeed9;
@@ -11,6 +12,17 @@
   --txt-stats: #453831;
   --cursor-color: #ffbb00;
   --msg-color: #453831c7;
+}
+
+@font-face {
+  font-family: 'Ubuntu Mono';
+  src: url('/src/assets/UbuntuMono-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Ubuntu Mono';
+  src: url('/src/assets/UbuntuMono-Bold.ttf');
+  font-weight: bold;
 }
 
 body {
