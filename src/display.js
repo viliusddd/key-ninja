@@ -1,4 +1,4 @@
-import {apiUrl, timerTime} from './config.js'
+import {API_URL, TIMER_TIME} from './config.js'
 import {appMsg, getApiJson} from './utils.js'
 
 let CURRENT_API_URL = '';
@@ -28,7 +28,7 @@ export default class Display {
    * @param {string=} url - api url from where the text is taken from
    */
   async create(url = null) {
-    if (!url) url = this.constructUrl(apiUrl, 154)
+    if (!url) url = this.constructUrl(API_URL, 154)
 
     const apiJson = await getApiJson(url, this.msgElement)
     if (!apiJson) return
@@ -36,7 +36,7 @@ export default class Display {
     const words = this.convertJsonToWords(apiJson)
 
     this.buildWords(words)
-    this.updateTimerElement(timerTime)
+    this.updateTimerElement(TIMER_TIME)
 
     appMsg(this.msgElement).start()
 
@@ -148,7 +148,7 @@ export default class Display {
    * @param {Element} appElement - root app element.
    */
   timer(appElement) {
-    let timer = timerTime
+    let timer = TIMER_TIME
     let timeElapsed = 0
 
     const timerInterval = setInterval(() => {

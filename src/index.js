@@ -3,7 +3,7 @@ import Cursor from './cursor.js'
 import Display from './display.js'
 import Key from './key.js'
 import Stats from './stats.js'
-import {specialKeys} from './config.js'
+import {SPECIAL_KEYS} from './config.js'
 import {appMsg} from './utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,7 +72,7 @@ function touchTyping(appElement) {
 function type(key, evt) {
   if (evt.key === ' ') {
     if (!key.isFirstWordLetter()) key.nextWord()
-  } else if (specialKeys.some(item => evt.key === item)) {
+  } else if (SPECIAL_KEYS.some(item => evt.key === item)) {
     return
   } else if (evt.key === 'Backspace') {
     key.prev()

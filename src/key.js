@@ -1,5 +1,5 @@
 import {getBBox} from './utils.js'
-import {extraLimit} from './config.js'
+import {EXTRA_LIMIT} from './config.js'
 
 /**
  * Checks if user input matches letters and goes back and forth the words.
@@ -162,7 +162,7 @@ export default class Key {
     )
 
     if (cursorX > (displayBBox.x + displayBBox.width)) return
-    if (this.activeWord.querySelectorAll('.extra').length === extraLimit) return
+    if (this.activeWord.querySelectorAll('.extra').length === EXTRA_LIMIT) return
 
     const div = document.createElement('div')
     div.classList.add('letter', 'incorrect', 'extra')
